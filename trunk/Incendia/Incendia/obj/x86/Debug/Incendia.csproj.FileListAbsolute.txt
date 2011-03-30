@@ -1,8 +1,0 @@
-C:\Users\Stefan\Documents\Visual Studio 2010\Projects\Incendia\Incendia\Incendia\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Users\Stefan\Documents\Visual Studio 2010\Projects\Incendia\Incendia\Incendia\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
-C:\Users\Stefan\Documents\Visual Studio 2010\Projects\Incendia\Incendia\Incendia\bin\x86\Debug\Incendia.exe
-C:\Users\Stefan\Documents\Visual Studio 2010\Projects\Incendia\Incendia\Incendia\bin\x86\Debug\Incendia.pdb
-C:\Users\Stefan\Documents\Visual Studio 2010\Projects\Incendia\Incendia\Incendia\obj\x86\Debug\Incendia.exe
-C:\Users\Stefan\Documents\Visual Studio 2010\Projects\Incendia\Incendia\Incendia\obj\x86\Debug\Incendia.pdb
-C:\Users\Stefan\Documents\Visual Studio 2010\Projects\Incendia\Incendia\Incendia\bin\x86\Debug\Content\Images\PlayerProxy.xnb
-C:\Users\Stefan\Documents\Visual Studio 2010\Projects\Incendia\Incendia\Incendia\bin\x86\Debug\Content\SpriteFont1.xnb
