@@ -1,2 +1,0 @@
-Content\Images\PlayerProxy.xnb
-Content\SpriteFont1.xnb
