@@ -17,6 +17,6 @@ namespace Incendia
         static public Random rand = new Random();
         public static int screenWidth, screenHeight;
         public static SpriteFont Font;
-
+        public static  float PixelsPerTile = 32;
     }
 }

@@ -21,8 +21,10 @@ namespace Incendia
 
         public static Character PlayerSprite(Vector2 location)
         {
-            Character c = new Character(location, PlayerAnimation(), -1);
+            Character c = new Character(location * Global.PixelsPerTile, PlayerAnimation(), -1);
             return c;
         }
+
+        
     }
 }

@@ -27,8 +27,8 @@ namespace Incendia
             IsMouseVisible = true;
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferWidth = 700;
-            graphics.PreferredBackBufferHeight = 550;
+            graphics.PreferredBackBufferWidth = 640;
+            graphics.PreferredBackBufferHeight = 480;
 
         }
 
@@ -55,8 +55,10 @@ namespace Incendia
 
             Global.Textures = new Dictionary<string, Texture2D>();
             Global.Textures.Add("Player", Content.Load<Texture2D>(@"Images\PlayerProxy"));
+            Global.Textures.Add("Wall", Content.Load<Texture2D>(@"Images\WallProxy")); //This image MUST be square
+
             Global.Font = Content.Load<SpriteFont>(@"SpriteFont1");
-            _playState = new PlayState(new Vector2(700, 550));
+            _playState = new PlayState(20, 15);
         }
 
         /// <summary>
@@ -91,7 +93,7 @@ namespace Incendia
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.White);
 
             spriteBatch.Begin();
             _playState.Draw(spriteBatch);

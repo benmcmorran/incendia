@@ -17,7 +17,7 @@ namespace Incendia
         Rectangle _rectangle;
 
         public string TextureIndex { get { return _textureIndex; } }
-        public Rectangle Rectangle { get { return _rectangle; } }
+        public Rectangle Rectangle { get { return _rectangle; } } //In PIXILS
 
         //Add a rectangle with zero width and height to make it fit the entire texture
         public Frame(string textureIndex, Rectangle rectangle)
