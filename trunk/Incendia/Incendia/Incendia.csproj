@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animation.cs" />
+    <Compile Include="Camera2D.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="Frame.cs" />
     <Compile Include="Generator.cs" />
