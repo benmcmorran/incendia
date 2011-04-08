@@ -58,7 +58,7 @@ namespace Incendia
             Global.Textures.Add("Wall", Content.Load<Texture2D>(@"Images\WallProxy")); //This image MUST be square
 
             Global.Font = Content.Load<SpriteFont>(@"SpriteFont1");
-            _playState = new PlayState(20, 15);
+            _playState = new PlayState(20, 15, GraphicsDevice.Viewport);
         }
 
         /// <summary>
@@ -95,9 +95,7 @@ namespace Incendia
         {
             GraphicsDevice.Clear(Color.White);
 
-            spriteBatch.Begin();
             _playState.Draw(spriteBatch);
-            spriteBatch.End();
 
             base.Draw(gameTime);
         }
