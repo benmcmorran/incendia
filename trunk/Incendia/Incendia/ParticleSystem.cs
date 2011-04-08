@@ -5,11 +5,13 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Particles
+namespace Incendia
 {
     class ParticleSystem
     {
         private List<Particle> particles = new List<Particle>();
+
+        public List<IParticleManipulator> Manipulators { get; set; }
 
         public Texture2D Texture { get; set; }
 
@@ -46,6 +48,8 @@ namespace Particles
             Curve scale, float scaleDeviation,
             Curve colorR, Curve colorG, Curve colorB, Curve colorA)
         {
+            Manipulators = new List<IParticleManipulator>();
+
             Texture = texture;
 
             EmitterLocation = emitterLocation;
@@ -79,7 +83,8 @@ namespace Particles
                 float age = particle.Age / particle.Lifetime;
 
                 Vector2 direction = particle.Velocity;
-                direction.Normalize();
+                if (direction != Vector2.Zero)
+                    direction.Normalize();
                 particle.Velocity = direction * Speed.Evaluate(age) * particle.SpeedMultiplier;
                 particle.Rotation = Rotation.Evaluate(age) * particle.RotationMultiplier;
                 particle.Scale = Scale.Evaluate(age) * particle.ScaleMultiplier;
@@ -101,6 +106,10 @@ namespace Particles
             emissionError -= (float)Math.Floor(emissionError);
             for (int i = 0; i < emission; i++)
                 particles.Add(GenerateParticle());
+
+            foreach (IParticleManipulator manipulator in Manipulators)
+                foreach (Particle particle in particles)
+                    manipulator.ManipulateParticle(particle);
         }
 
         public void Draw(SpriteBatch spriteBatch)
