@@ -27,7 +27,7 @@ namespace Incendia
 
         //Return a rectangle based on the current position and the size of the current default frame
         //May be overridden by a parent class
-        public virtual Rectangle Visual { get { return new Rectangle((int)_position.X, (int)_position.Y, (int)((float)_defaultAnimation.GetFrame().Rectangle.Width / Global.PixelsPerTile), (int)((float)_defaultAnimation.GetFrame().Rectangle.Height / Global.PixelsPerTile)); } }
+        public virtual Rectanglef Visual { get { return new Rectanglef(_position.X, _position.Y, ((float)_defaultAnimation.GetFrame().Rectangle.Width / Global.PixelsPerTile), (float)_defaultAnimation.GetFrame().Rectangle.Height / Global.PixelsPerTile); } }
 
         public float Rotation { get { return _rotation; } set { _rotation = value; } }
         public float Scale { get { return _scale; } set { _scale = value; } }
