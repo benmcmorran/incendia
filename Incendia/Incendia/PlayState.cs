@@ -19,7 +19,7 @@ namespace Incendia
 
         public PlayState(uint horizontalTiles, uint verticalTiles, Viewport viewport)
         {
-            _player = Generator.PlayerSprite(new Vector2(0, 0));
+            _player = Generator.PlayerSprite(new Vector2(5, 5));
             WorldLimits = new Vector2((float)horizontalTiles, (float)verticalTiles);
             grid = new uint[horizontalTiles,verticalTiles];
 
@@ -29,6 +29,17 @@ namespace Incendia
             grid[1, 0] = 1;
             grid[19, 14] = 1;
             grid[18, 13] = 1;
+            grid[10, 10] = 1;
+            grid[10, 11] = 1;
+            grid[10, 12] = 1;
+            grid[10, 13] = 1;
+            grid[13, 10] = 1;
+            grid[12, 11] = 1;
+            grid[13, 12] = 1;
+            grid[13, 13] = 1;
+
+
+
 
             camera = new Camera2D();
             this.viewport = viewport;
@@ -38,7 +49,11 @@ namespace Incendia
         {
             TakeInput();
             _player.Update(gameTime, this);
-            camera.Location = _player.Position * Global.PixelsPerTile;
+            //Locked camera
+            //camera.Location = _player.Position * Global.PixelsPerTile;
+
+            //Smooth camera
+            camera.Location += ((_player.PositionCenter * Global.PixelsPerTile) - camera.Location) * 0.1f;
         }
 
         public void Draw(SpriteBatch batch)
@@ -65,17 +80,24 @@ namespace Incendia
             if (Input.DistanceToMouse(_player.PositionCenter * Global.PixelsPerTile) > Global.PixelsPerTile * _player.Visual.Height / 2)
                 _player.Rotation = Input.AngleToMouse(Vector2.Transform(_player.PositionCenter * Global.PixelsPerTile, camera.ViewTransformationMatrix(viewport)));
             if (Input.KeyHeld(Keys.W))
-                _player.SetVelocityY(-3);
+                _player.SetVelocityY(-5);
             else if (Input.KeyHeld(Keys.S))
-                _player.SetVelocityY(3);
+                _player.SetVelocityY(5);
             else
                 _player.SetVelocityY(0);
             if (Input.KeyHeld(Keys.D))
-                _player.SetVelocityX(3);
+                _player.SetVelocityX(5);
             else if (Input.KeyHeld(Keys.A))
-                _player.SetVelocityX(-3);
+                _player.SetVelocityX(-5);
             else
                 _player.SetVelocityX(0);
+        }
+
+        public bool TileIsSolid(int x, int y)
+        {
+            x = (int)MathHelper.Clamp(x, 0, WorldLimits.X - 1);
+            y = (int)MathHelper.Clamp(y, 0, WorldLimits.Y -1);
+            return grid[x, y] != 0;
         }
     }
 }

@@ -29,7 +29,6 @@ namespace Incendia
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = 640;
             graphics.PreferredBackBufferHeight = 480;
-
         }
 
         /// <summary>
@@ -58,7 +57,7 @@ namespace Incendia
             Global.Textures.Add("Wall", Content.Load<Texture2D>(@"Images\WallProxy")); //This image MUST be square
 
             Global.Font = Content.Load<SpriteFont>(@"SpriteFont1");
-            _playState = new PlayState(20, 15, GraphicsDevice.Viewport);
+            _playState = new PlayState(25, 20, GraphicsDevice.Viewport);
         }
 
         /// <summary>
