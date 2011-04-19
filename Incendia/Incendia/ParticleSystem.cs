@@ -75,11 +75,11 @@ namespace Incendia
             ColorA = colorA;
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, PlayState map)
         {
             foreach (Particle particle in particles)
             {
-                particle.Update(gameTime);
+                particle.Update(gameTime, map);
                 float age = particle.Age / particle.Lifetime;
 
                 Vector2 direction = particle.Velocity;

@@ -55,6 +55,8 @@ namespace Incendia
             Global.Textures = new Dictionary<string, Texture2D>();
             Global.Textures.Add("Player", Content.Load<Texture2D>(@"Images\PlayerProxy"));
             Global.Textures.Add("Wall", Content.Load<Texture2D>(@"Images\WallProxy")); //This image MUST be square
+            Global.Textures.Add("Particle", Content.Load<Texture2D>(@"Images\ParticleProxy")); //This image MUST be square
+
 
             Global.Font = Content.Load<SpriteFont>(@"SpriteFont1");
             _playState = new PlayState(25, 20, GraphicsDevice.Viewport);

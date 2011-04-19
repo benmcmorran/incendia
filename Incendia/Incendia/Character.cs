@@ -12,9 +12,12 @@ namespace Incendia
     /// </summary>
     class Character : Sprite
     {
-        public Character(Vector2 position, Animation defaultAnimation, double lifeTime)
+        public int Hp { get; set; }
+
+        public Character(Vector2 position, Animation defaultAnimation, double lifeTime, int hp)
             : base(position, defaultAnimation, lifeTime)
         {
+            Hp = hp;
         }
 
         public override void Update(GameTime gameTime, PlayState map) 
@@ -148,6 +151,13 @@ namespace Incendia
             }
         }
 
+        /// <summary>
+        /// For victims ONLY!
+        /// </summary>
+        /// <param name="map"></param>
+        public void Behave(PlayState map)
+        {
+        }
 
     }
 }
