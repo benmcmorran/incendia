@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Incendia
 {
-    class PlayState
+    class PlayState : IGraph<int>
     {
         Character _player;
         public Vector2 WorldLimits { get; set; }
@@ -123,6 +123,46 @@ namespace Incendia
             x = (int)MathHelper.Clamp(x, 0, WorldLimits.X - 1);
             y = (int)MathHelper.Clamp(y, 0, WorldLimits.Y -1);
             return grid[x, y] != 0;
+        }
+
+        public float LeastCostEstimate(int start, int end)
+        {
+            // Manhattan estimate
+            int startX, startY, endX, endY;
+            CellFromInt(start, out startX, out startY);
+            CellFromInt(end, out endX, out endY);
+            return Math.Abs(endX - startX) + Math.Abs(endY - startY);
+        }
+
+        public Dictionary<int, float> AdjacentCost(int node)
+        {
+            int x, y;
+            CellFromInt(node, out x, out y);
+
+            Dictionary<int, float> neighbors = new Dictionary<int, float>(4);
+
+            // N, S, E, and W cells have a cost of one
+            if (y > 0 && TileIsSolid(x, y - 1))
+                neighbors.Add(IntFromCell(x, y - 1), 1);
+            if (y < grid.GetLength(1) - 1 && TileIsSolid(x, y + 1))
+                neighbors.Add(IntFromCell(x, y + 1), 1);
+            if (x > 0 && TileIsSolid(x - 1, y))
+                neighbors.Add(IntFromCell(x - 1, y), 1);
+            if (x < grid.GetLength(0) - 1 && TileIsSolid(x + 1, y))
+                neighbors.Add(IntFromCell(x + 1, y), 1);
+
+            return neighbors;
+        }
+
+        public void CellFromInt(int node, out int x, out int y)
+        {
+            x = node % grid.GetLength(0);
+            y = node / grid.GetLength(0);
+        }
+
+        public int IntFromCell(int x, int y)
+        {
+            return y * grid.GetLength(0) + x;
         }
     }
 }
