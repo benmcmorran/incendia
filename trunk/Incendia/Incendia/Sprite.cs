@@ -16,7 +16,7 @@ namespace Incendia
 
         protected float _rotation; // In radians
         protected float _scale; //In factors
-        protected Vector2 _position; //Location of upper-right corner in tiles
+        protected Vector2 _position; //Location of upper-right corner in pixils
         protected float _rotationSpeed; //In radians per second 
         protected float _scaleSpeed;//In factors per second
         protected Vector2 _velocity; //In tiles per second
@@ -36,7 +36,7 @@ namespace Incendia
         public Vector2 Velocity { get { return _velocity; } }
         public bool Dead { get { return _dead || _scale <= 0; } set { _dead = value; } }
         public Vector2 Position { get { return _position / Global.PixelsPerTile; } } //Location of upper-right corner in tiles
-        public Vector2 PositionCenter { get { return new Vector2(_position.X + Visual.Width, _position.Y + Visual.Height) / Global.PixelsPerTile; } } //Location of center in tiles
+        public Vector2 PositionCenter { get { return new Vector2(Position.X + Visual.Width / 2, Position.Y + Visual.Height / 2); } } //Location of center in tiles
 
 
         public Sprite(Vector2 position, Animation defaultAnimation, double lifeTime)

@@ -16,6 +16,7 @@ namespace Incendia
         uint[,] grid;
         Camera2D camera;
         Viewport viewport;
+        List<Character> victims = new List<Character>();
 
         public PlayState(uint horizontalTiles, uint verticalTiles, Viewport viewport)
         {
@@ -54,6 +55,8 @@ namespace Incendia
 
             //Smooth camera
             camera.Location += ((_player.PositionCenter * Global.PixelsPerTile) - camera.Location) * 0.1f;
+            UpdateVictims(gameTime);
+
         }
 
         public void Draw(SpriteBatch batch)
@@ -61,6 +64,11 @@ namespace Incendia
             batch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.ViewTransformationMatrix(viewport));
             
             _player.Draw(batch);
+
+            foreach (Character c in victims)
+            {
+                c.Draw(batch);
+            }
 
             //Draw what is on the grid
             for (int x = 0; x < WorldLimits.X; x++ )
@@ -71,6 +79,8 @@ namespace Incendia
                         batch.Draw(Global.Textures["Wall"], new Vector2(x,y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures["Wall"].Width, SpriteEffects.None, 0);
                 }
             }
+
+            //batch.Draw(Global.Textures["Wall"], _player.PositionCenter * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, new Vector2(1,1), SpriteEffects.None, 0);
 
             batch.End();
         }
@@ -91,6 +101,21 @@ namespace Incendia
                 _player.SetVelocityX(-5);
             else
                 _player.SetVelocityX(0);
+        }
+
+        void UpdateVictims(GameTime gameTime)
+        {
+            for (int i = victims.Count - 1; i >= 0; i--)
+            {
+                if (victims[i].Hp <= 0)
+                {
+                    victims.RemoveAt(i);
+                    continue;
+                }
+
+                victims[i].Update(gameTime, this);
+                victims[i].Behave(this);
+            }
         }
 
         public bool TileIsSolid(int x, int y)
