@@ -26,6 +26,11 @@ namespace Incendia
         public float Age { get; set; }
         public float Lifetime { get; set; }
 
+        public Vector2 TopRightCorner { 
+            get { return new Vector2(Position.X - Texture.Width / 2 * Scale, Position.Y - Texture.Height / 2 * Scale); }
+            set { Position = new Vector2(value.X + Texture.Width / 2 * Scale, value.Y + Texture.Height * Scale); }
+        }
+
         public Particle(Texture2D texture,
             Vector2 position, Vector2 velocity, float speedMultiplier,
             float rotation, float rotationMultiplier,
@@ -67,10 +72,13 @@ namespace Incendia
         //Assuming you are not already colliding with a tile
         private void CollideWithWalls(GameTime gameTime, PlayState map)
         {
+            float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             if (Velocity.X > 0)
             {
                 //Find the set of tiles that our movement will intersect with
-                Rectanglef movementBox = new Rectanglef(Position.X + Texture.Width, Position.Y, Velocity.X * (float)gameTime.ElapsedGameTime.TotalSeconds, Texture.Height);
+                Rectanglef movementBox = new Rectanglef((TopRightCorner.X + Texture.Width * Scale), TopRightCorner.Y, Velocity.X * (float)gameTime.ElapsedGameTime.TotalSeconds, Texture.Height * Scale);
+                movementBox.Multiply(1 / Global.PixelsPerTile);
                 int minX = (int)Math.Floor(movementBox.X);
                 int maxX = (int)Math.Floor(movementBox.X + movementBox.Width);
                 int minY = (int)Math.Floor(movementBox.Y);
@@ -83,9 +91,12 @@ namespace Incendia
                     {
                         if (map.TileIsSolid(x, y))
                         {
-                            Velocity += new Vector2(-Velocity.X,0);
-                            Position += new Vector2(-Texture.Width - 0.001f, 0);
+                            //s += new Vector2(-Velocity.X, -Velocity.Y / 2);
+                            //TopRightCorner += new Vector2(-Texture.Width * Scale - 0.001f, 0);
                             maxX = -999999;
+                            Age += (Lifetime - Age) / 1.5f;
+                            Velocity = new Vector2(-Velocity.X, Global.rand.Next(-500,500));
+
                             break;
                         }
                     }
@@ -95,7 +106,8 @@ namespace Incendia
             else if (Velocity.X < 0)
             {
                 //Find the set of tiles that our movement will intersect with
-                Rectanglef movementBox = new Rectanglef(Position.X + (Velocity.X * (float)gameTime.ElapsedGameTime.TotalSeconds), Position.Y, -Velocity.X * (float)gameTime.ElapsedGameTime.TotalSeconds, Texture.Height);
+                Rectanglef movementBox = new Rectanglef((TopRightCorner.X + (Velocity.X * (float)gameTime.ElapsedGameTime.TotalSeconds)), TopRightCorner.Y, -Velocity.X * (float)gameTime.ElapsedGameTime.TotalSeconds, Texture.Height * Scale);
+                movementBox.Multiply(1 / Global.PixelsPerTile);
                 int maxX = (int)Math.Floor(movementBox.X);
                 int minX = (int)Math.Floor(movementBox.X + movementBox.Width);
                 int minY = (int)Math.Floor(movementBox.Y);
@@ -108,9 +120,14 @@ namespace Incendia
                     {
                         if (map.TileIsSolid(x, y))
                         {
-                            Velocity += new Vector2(-Velocity.X,0);
-                            Position += new Vector2(1.001f, 0);
+                            //Velocity += new Vector2(-Velocity.X, -Velocity.Y / 2);
+                            //TopRightCorner += new Vector2(1.001f, 0);
                             minX = 999999;
+
+                            Age += (Lifetime - Age) / 1.5f;
+                            Velocity = new Vector2(-Velocity.X, Global.rand.Next(-500, 500));
+
+
                             break;
                         }
                     }
@@ -120,7 +137,8 @@ namespace Incendia
             if (Velocity.Y > 0)
             {
                 //Find the set of tiles that our movement will intersect with
-                Rectanglef movementBox = new Rectanglef(Position.X, Position.Y + Texture.Height, Texture.Width, Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                Rectanglef movementBox = new Rectanglef(TopRightCorner.X, TopRightCorner.Y + Texture.Height * Scale, Texture.Width * Scale, Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                movementBox.Multiply(1 / Global.PixelsPerTile);
                 int minX = (int)Math.Floor(movementBox.X);
                 int maxX = (int)Math.Floor(movementBox.X + movementBox.Width);
                 int minY = (int)Math.Floor(movementBox.Y);
@@ -133,9 +151,13 @@ namespace Incendia
                     {
                         if (map.TileIsSolid(x, y))
                         {
-                            Velocity += new Vector2(0,-Velocity.Y);
-                            Position += new Vector2(0,-Texture.Height - 0.001f);
+                            //Velocity += new Vector2(-Velocity.X / 2, -Velocity.Y);
+                            //TopRightCorner += new Vector2(0, -Texture.Height * Scale - 0.001f);
                             maxY = -999999;
+
+                            Age += (Lifetime - Age) / 1.5f;
+                            Velocity = new Vector2(Global.rand.Next(-500, 500), -Velocity.Y);
+
                             break;
                         }
                     }
@@ -145,7 +167,8 @@ namespace Incendia
             else if (Velocity.Y < 0)
             {
                 //Find the set of tiles that our movement will intersect with
-                Rectanglef movementBox = new Rectanglef(Position.X, Position.Y + (Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds), Texture.Width, -Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                Rectanglef movementBox = new Rectanglef(TopRightCorner.X, TopRightCorner.Y + (Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds), Texture.Width * Scale, -Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                movementBox.Multiply(1 / Global.PixelsPerTile);
                 int minX = (int)Math.Floor(movementBox.X);
                 int maxX = (int)Math.Floor(movementBox.X + movementBox.Width);
                 int minY = (int)Math.Floor(movementBox.Y);
@@ -158,10 +181,13 @@ namespace Incendia
                     {
                         if (map.TileIsSolid(x, y))
                         {
-                            Velocity += new Vector2(0,-Velocity.Y);
-                            Position += new Vector2(0,1.001f);
+                            //Velocity += new Vector2(-Velocity.X / 2,-Velocity.Y);
+                            //TopRightCorner += new Vector2(0, 1.001f);
                             //get us out of these loops
                             minY = 999999;
+                            Velocity = new Vector2(Global.rand.Next(-500, 500), -Velocity.Y);
+                            Age += (Lifetime - Age) / 1.5f;
+
                             break;
                         }
                     }

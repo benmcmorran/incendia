@@ -56,6 +56,7 @@ namespace Incendia
             Global.Textures.Add("Player", Content.Load<Texture2D>(@"Images\PlayerProxy"));
             Global.Textures.Add("Wall", Content.Load<Texture2D>(@"Images\WallProxy")); //This image MUST be square
             Global.Textures.Add("Particle", Content.Load<Texture2D>(@"Images\ParticleProxy")); //This image MUST be square
+            Global.Textures.Add("Victim1", Content.Load<Texture2D>(@"Images\VictimProxy")); //This image MUST be square
 
 
             Global.Font = Content.Load<SpriteFont>(@"SpriteFont1");

@@ -20,5 +20,13 @@ namespace Incendia
             Width = width;
             Height = height;
         }
+
+        public void Multiply(float value)
+        {
+            X *= value;
+            Y *= value;
+            Width *= value;
+            Height *= value;
+        }
     }
 }
