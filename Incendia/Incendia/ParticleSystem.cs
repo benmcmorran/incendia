@@ -75,7 +75,7 @@ namespace Incendia
             ColorA = colorA;
         }
 
-        public void Update(GameTime gameTime, PlayState map)
+        public void Update(GameTime gameTime, PlayState map, bool emitParticles)
         {
             foreach (Particle particle in particles)
             {
@@ -99,13 +99,16 @@ namespace Incendia
                     i--;
                 }
 
-            float emission = (float)gameTime.ElapsedGameTime.TotalSeconds * EmissionRate;
-            emissionError += emission - (float)Math.Floor(emission);
-            emission -= emission - (float)Math.Floor(emission);
-            emission += (float)Math.Floor(emissionError);
-            emissionError -= (float)Math.Floor(emissionError);
-            for (int i = 0; i < emission; i++)
-                particles.Add(GenerateParticle());
+            if (emitParticles)
+            {
+                float emission = (float)gameTime.ElapsedGameTime.TotalSeconds * EmissionRate;
+                emissionError += emission - (float)Math.Floor(emission);
+                emission -= emission - (float)Math.Floor(emission);
+                emission += (float)Math.Floor(emissionError);
+                emissionError -= (float)Math.Floor(emissionError);
+                for (int i = 0; i < emission; i++)
+                    particles.Add(GenerateParticle());
+            }
 
             foreach (IParticleManipulator manipulator in Manipulators)
                 foreach (Particle particle in particles)

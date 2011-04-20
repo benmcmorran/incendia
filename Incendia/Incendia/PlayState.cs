@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Incendia
 {
+    public enum Nozzle {wide, medium, narrow }
     class PlayState : IGraph<int>
     {
         Character _player;
@@ -17,12 +18,17 @@ namespace Incendia
         Camera2D camera;
         Viewport viewport;
         List<Character> victims = new List<Character>();
+        Nozzle selectedNozzle;
+        ParticleSystem fireHose;
+        bool shootingWater;
 
         public PlayState(uint horizontalTiles, uint verticalTiles, Viewport viewport)
         {
             _player = Generator.PlayerSprite(new Vector2(5, 5));
             WorldLimits = new Vector2((float)horizontalTiles, (float)verticalTiles);
             grid = new uint[horizontalTiles,verticalTiles];
+
+            selectedNozzle = Nozzle.narrow;
 
             //Here is where we define our grid for testing purposes only
             grid[0, 1] = 1;
@@ -39,7 +45,18 @@ namespace Incendia
             grid[13, 12] = 1;
             grid[13, 13] = 1;
 
+            Curve c = new Curve();
+            c.Keys.Add(new CurveKey(0, 0));
+            c.Keys.Add(new CurveKey(.3f, 1));
+            c.Keys.Add(new CurveKey(.7f, 1));
+            c.Keys.Add(new CurveKey(1, 0));
 
+            Curve a = new Curve();
+            a.Keys.Add(new CurveKey(0, 0));
+            a.Keys.Add(new CurveKey(.3f, 1));
+            a.Keys.Add(new CurveKey(.7f, 1));
+            a.Keys.Add(new CurveKey(1, 0));
+            fireHose = new ParticleSystem(Global.Textures["Particle"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a); 
 
 
             camera = new Camera2D();
@@ -55,8 +72,13 @@ namespace Incendia
 
             //Smooth camera
             camera.Location += ((_player.PositionCenter * Global.PixelsPerTile) - camera.Location) * 0.1f;
+            
             UpdateVictims(gameTime);
+            fireHose.EmitterLocation = (_player.PositionCenter + new Vector2((float)Math.Cos(_player.Rotation), (float)Math.Sin(_player.Rotation)) / 2) * Global.PixelsPerTile;
+            fireHose.MinDirection = _player.Rotation - NozzleWidthInRadians();
+            fireHose.MaxDirection = _player.Rotation + NozzleWidthInRadians();
 
+            fireHose.Update(gameTime, this, shootingWater && !TileIsSolid((int)Math.Floor(fireHose.EmitterLocation.X), (int)Math.Floor(fireHose.EmitterLocation.Y)));
         }
 
         public void Draw(SpriteBatch batch)
@@ -81,7 +103,7 @@ namespace Incendia
             }
 
             //batch.Draw(Global.Textures["Wall"], _player.PositionCenter * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, new Vector2(1,1), SpriteEffects.None, 0);
-
+            fireHose.Draw(batch);
             batch.End();
         }
 
@@ -101,6 +123,11 @@ namespace Incendia
                 _player.SetVelocityX(-5);
             else
                 _player.SetVelocityX(0);
+
+            shootingWater = Input.MouseLeftClicked();
+            
+            if(Input.KeyJustPressed(Keys.Space))
+                ItterateNozzle();
         }
 
         void UpdateVictims(GameTime gameTime)
@@ -124,6 +151,27 @@ namespace Incendia
             y = (int)MathHelper.Clamp(y, 0, WorldLimits.Y -1);
             return grid[x, y] != 0;
         }
+
+        float NozzleWidthInRadians()
+        {
+            if (selectedNozzle == Nozzle.narrow)
+                return (float)Math.PI / 32;
+            else if (selectedNozzle == Nozzle.medium)
+                return (float)Math.PI / 12;
+            else
+                return (float)Math.PI / 6;
+        }
+
+        void ItterateNozzle()
+        {
+            if (selectedNozzle == Nozzle.narrow)
+                selectedNozzle = Nozzle.medium;
+            else if (selectedNozzle == Nozzle.medium)
+                selectedNozzle = Nozzle.wide;
+            else
+                selectedNozzle = Nozzle.narrow;
+        }
+        
 
         public float LeastCostEstimate(int start, int end)
         {

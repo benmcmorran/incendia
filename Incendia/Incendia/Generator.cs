@@ -19,9 +19,24 @@ namespace Incendia
             return a;
         }
 
+        public static Animation VictimAnimation()
+        {
+            List<Frame> f = new List<Frame>();
+            f.Add(new Frame("Victim", new Microsoft.Xna.Framework.Rectangle(0, 0, 0, 0)));
+            Animation a = new Animation(.05, f);
+            return a;
+        }
+
+
         public static Character PlayerSprite(Vector2 location)
         {
             Character c = new Character(location * Global.PixelsPerTile, PlayerAnimation(), -1, 100);
+            return c;
+        }
+
+        public static Character VictimSprite(Vector2 location)
+        {
+            Character c = new Character(location * Global.PixelsPerTile, VictimAnimation(), -1, 100);
             return c;
         }
 
