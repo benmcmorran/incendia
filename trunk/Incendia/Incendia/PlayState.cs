@@ -53,6 +53,8 @@ namespace Incendia
             grid[13, 12] = Generator.Wall();
             grid[13, 13] = Generator.Wall();
 
+            victims.Add(Generator.VictimSprite(new Vector2(4, 4)));
+
             Curve c = new Curve();
             c.Keys.Add(new CurveKey(0, 0));
             c.Keys.Add(new CurveKey(.3f, 1));
@@ -99,25 +101,28 @@ namespace Incendia
         public void Draw(SpriteBatch batch)
         {
             batch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.ViewTransformationMatrix(viewport));
-            
+
+            //Draw what is on the grid
+            for (int x = 0; x < WorldLimits.X; x++)
+            {
+                for (int y = 0; y < WorldLimits.Y; y++)
+                {
+                    if (camera.IsInView(new Rectangle((int)(x * Global.PixelsPerTile), (int)(y * Global.PixelsPerTile), (int)Global.PixelsPerTile, (int)Global.PixelsPerTile), viewport))
+                        batch.Draw(Global.Textures[grid[x, y].Texture], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[grid[x, y].Texture].Width, SpriteEffects.None, 0);
+                }
+            }
+
+            _player.Draw(batch);
+
 
             foreach (Character c in victims)
             {
                 c.Draw(batch);
             }
 
-            //Draw what is on the grid
-            for (int x = 0; x < WorldLimits.X; x++ )
-            {
-                for (int y = 0; y < WorldLimits.Y; y++)
-                {
-                    if(camera.IsInView(new Rectangle((int)(x * Global.PixelsPerTile), (int)(y * Global.PixelsPerTile), (int)Global.PixelsPerTile, (int)Global.PixelsPerTile),viewport))
-                        batch.Draw(Global.Textures[grid[x,y].Texture], new Vector2(x,y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[grid[x,y].Texture].Width, SpriteEffects.None, 0);
-                }
-            }
+            
 
             //batch.Draw(Global.Textures["Wall"], _player.PositionCenter * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, new Vector2(1,1), SpriteEffects.None, 0);
-            fireHose.Draw(batch);
             _player.Draw(batch);
 
             batch.End();
