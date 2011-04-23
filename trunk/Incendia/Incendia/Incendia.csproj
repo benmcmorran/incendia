@@ -127,6 +127,7 @@
     <Compile Include="RectangleParticleManipulator.cs" />
     <Compile Include="Rectanglef.cs" />
     <Compile Include="Sprite.cs" />
+    <Compile Include="Tile.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
