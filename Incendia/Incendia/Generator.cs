@@ -40,6 +40,20 @@ namespace Incendia
             return c;
         }
 
+
+        public static Tile TiledFloor()
+        {
+            Tile t = new Tile(0.01f, 100, FireState.Unburned, "TiledFloor", false);
+            return t;
+        }
+
+        public static Tile Wall()
+        {
+            Tile t = new Tile(0.00f, 100, FireState.Nonflammable, "Wall", true);
+            return t;
+        }
+
+
         
     }
 }

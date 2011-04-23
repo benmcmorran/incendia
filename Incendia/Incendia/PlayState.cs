@@ -14,7 +14,7 @@ namespace Incendia
     {
         Character _player;
         public Vector2 WorldLimits { get; set; }
-        uint[,] grid;
+        Tile[,] grid;
         Camera2D camera;
         Viewport viewport;
         List<Character> victims = new List<Character>();
@@ -22,28 +22,36 @@ namespace Incendia
         ParticleSystem fireHose;
         bool shootingWater;
 
-        public PlayState(uint horizontalTiles, uint verticalTiles, Viewport viewport)
+        public PlayState(int horizontalTiles, int verticalTiles, Viewport viewport)
         {
             _player = Generator.PlayerSprite(new Vector2(5, 5));
             WorldLimits = new Vector2((float)horizontalTiles, (float)verticalTiles);
-            grid = new uint[horizontalTiles,verticalTiles];
+            grid = new Tile[horizontalTiles,verticalTiles];
 
             selectedNozzle = Nozzle.narrow;
 
+            for (int x = horizontalTiles - 1; x >= 0; x--)
+            {
+                for (int y = verticalTiles - 1; y >= 0; y--)
+                {
+                    grid[x,y] = Generator.TiledFloor();
+                }
+            }
+
             //Here is where we define our grid for testing purposes only
-            grid[0, 1] = 1;
-            grid[0, 0] = 1;
-            grid[1, 0] = 1;
-            grid[19, 14] = 1;
-            grid[18, 13] = 1;
-            grid[10, 10] = 1;
-            grid[10, 11] = 1;
-            grid[10, 12] = 1;
-            grid[10, 13] = 1;
-            grid[13, 10] = 1;
-            grid[12, 11] = 1;
-            grid[13, 12] = 1;
-            grid[13, 13] = 1;
+            grid[0, 1] = Generator.Wall();
+            grid[0, 0] = Generator.Wall();
+            grid[1, 0] = Generator.Wall();
+            grid[19, 14] = Generator.Wall();
+            grid[18, 13] = Generator.Wall();
+            grid[10, 10] = Generator.Wall();
+            grid[10, 11] = Generator.Wall();
+            grid[10, 12] = Generator.Wall();
+            grid[10, 13] = Generator.Wall();
+            grid[13, 10] = Generator.Wall();
+            grid[12, 11] = Generator.Wall();
+            grid[13, 12] = Generator.Wall();
+            grid[13, 13] = Generator.Wall();
 
             Curve c = new Curve();
             c.Keys.Add(new CurveKey(0, 0));
@@ -85,7 +93,6 @@ namespace Incendia
         {
             batch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.ViewTransformationMatrix(viewport));
             
-            _player.Draw(batch);
 
             foreach (Character c in victims)
             {
@@ -97,13 +104,15 @@ namespace Incendia
             {
                 for (int y = 0; y < WorldLimits.Y; y++)
                 {
-                    if(grid[x,y] == 1)
-                        batch.Draw(Global.Textures["Wall"], new Vector2(x,y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures["Wall"].Width, SpriteEffects.None, 0);
+                    if(camera.IsInView(new Rectangle((int)(x * Global.PixelsPerTile), (int)(y * Global.PixelsPerTile), (int)Global.PixelsPerTile, (int)Global.PixelsPerTile),viewport))
+                        batch.Draw(Global.Textures[grid[x,y].Texture], new Vector2(x,y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[grid[x,y].Texture].Width, SpriteEffects.None, 0);
                 }
             }
 
             //batch.Draw(Global.Textures["Wall"], _player.PositionCenter * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, new Vector2(1,1), SpriteEffects.None, 0);
             fireHose.Draw(batch);
+            _player.Draw(batch);
+
             batch.End();
         }
 
@@ -149,7 +158,7 @@ namespace Incendia
         {
             x = (int)MathHelper.Clamp(x, 0, WorldLimits.X - 1);
             y = (int)MathHelper.Clamp(y, 0, WorldLimits.Y -1);
-            return grid[x, y] != 0;
+            return grid[x,y].Solid;
         }
 
         float NozzleWidthInRadians()
