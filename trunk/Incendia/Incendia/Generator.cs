@@ -41,9 +41,9 @@ namespace Incendia
         }
 
 
-        public static Tile TiledFloor()
+        public static Tile WoodenFloor()
         {
-            Tile t = new Tile(0.01f, 100, FireState.Unburned, "TiledFloor", false);
+            Tile t = new Tile(0.004f, Global.rand.Next(2000,3000), FireState.Unburned, "WoodenFloor", false);
             return t;
         }
 

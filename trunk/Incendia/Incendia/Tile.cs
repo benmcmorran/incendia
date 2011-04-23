@@ -9,10 +9,10 @@ namespace Incendia
     {
         public float Flammability { get; private set; }
         public int Material { get; private set; }
-        public FireState State { get; private set; }
+        public FireState State { get; set; }
         public string _texture;
         public bool _solid;
-        public bool Solid { get { return _solid || State == FireState.Burnt; } }
+        public bool Solid { get { return _solid && State != FireState.Burnt; } }
         public string Texture
         {
             get
@@ -45,7 +45,7 @@ namespace Incendia
         /// <returns></returns>
         public bool HitByWater()
         {
-            if (State == FireState.Burning)
+            if (State == FireState.Burning && Global.rand.Next(0,1001) >= 1000)
             {
                 State = FireState.Unburned;
                 return true;

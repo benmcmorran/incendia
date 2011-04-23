@@ -17,7 +17,7 @@ namespace Incendia
 
         public Texture2D Texture { get; set; }
 
-        public Vector2 EmitterLocation { get; set; }
+        public List<Vector2> EmitterLocations { get; set; }
         public float MinDirection { get; set; }
         public float MaxDirection { get; set; }
 
@@ -54,7 +54,8 @@ namespace Incendia
 
             Texture = texture;
 
-            EmitterLocation = emitterLocation;
+            EmitterLocations = new List<Vector2>();
+            EmitterLocations.Add(emitterLocation);
             MinDirection = minDirection;
             MaxDirection = maxDirection;
 
@@ -71,6 +72,41 @@ namespace Incendia
             Scale = scale;
             ScaleDeviation = scaleDeviation;
         
+            ColorR = colorR;
+            ColorG = colorG;
+            ColorB = colorB;
+            ColorA = colorA;
+        }
+
+        public ParticleSystem(Texture2D texture,
+            List<Vector2> emitterLocations, float minDirection, float maxDirection,
+            float minLifetime, float maxLifetime, float emissionRate,
+            Curve speed, float speedDeviation,
+            Curve rotation, float rotationDeviation,
+            Curve scale, float scaleDeviation,
+            Curve colorR, Curve colorG, Curve colorB, Curve colorA)
+        {
+            Manipulators = new List<IParticleManipulator>();
+
+            Texture = texture;
+
+            EmitterLocations = emitterLocations;
+            MinDirection = minDirection;
+            MaxDirection = maxDirection;
+
+            MinLifetime = minLifetime;
+            MaxLifetime = maxLifetime;
+            EmissionRate = emissionRate;
+
+            Speed = speed;
+            SpeedDeviation = speedDeviation;
+
+            Rotation = rotation;
+            RotationDeviation = rotationDeviation;
+
+            Scale = scale;
+            ScaleDeviation = scaleDeviation;
+
             ColorR = colorR;
             ColorG = colorG;
             ColorB = colorB;
@@ -103,13 +139,16 @@ namespace Incendia
 
             if (emitParticles)
             {
-                float emission = (float)gameTime.ElapsedGameTime.TotalSeconds * EmissionRate;
-                emissionError += emission - (float)Math.Floor(emission);
-                emission -= emission - (float)Math.Floor(emission);
-                emission += (float)Math.Floor(emissionError);
-                emissionError -= (float)Math.Floor(emissionError);
-                for (int i = 0; i < emission; i++)
-                    particles.Add(GenerateParticle());
+                for(int j = EmitterLocations.Count - 1; j >= 0; j--)
+                {
+                    float emission = (float)gameTime.ElapsedGameTime.TotalSeconds * EmissionRate;
+                    emissionError += emission - (float)Math.Floor(emission);
+                    emission -= emission - (float)Math.Floor(emission);
+                    emission += (float)Math.Floor(emissionError);
+                    emissionError -= (float)Math.Floor(emissionError);
+                    for (int i = 0; i < emission; i++)
+                        particles.Add(GenerateParticle(j));
+                }
             }
 
             foreach (IParticleManipulator manipulator in Manipulators)
@@ -123,13 +162,14 @@ namespace Incendia
                 particle.Draw(spriteBatch);
         }
 
-        private Particle GenerateParticle()
+        private Particle GenerateParticle(int index)
         {
+           
             float speedMultiplier = 1 + random.NextFloat(-SpeedDeviation, SpeedDeviation);
             float rotationMultiplier = 1 + random.NextFloat(-RotationDeviation, RotationDeviation);
             float scaleMultiplier = 1 + random.NextFloat(-ScaleDeviation, ScaleDeviation);
 
-            return new Particle(Texture, EmitterLocation,
+            return new Particle(Texture, EmitterLocations[index] + new Vector2(Global.rand.NextFloat(0,0.99f),Global.rand.NextFloat(0,0.99f)),
                 Utils.Vector2FromSpeedAndDirection(Speed.Evaluate(0) * speedMultiplier, random.NextFloat(MinDirection, MaxDirection)),
                 speedMultiplier, Rotation.Evaluate(0) * rotationMultiplier, rotationMultiplier,
                 new Color(ColorR.Evaluate(0), ColorG.Evaluate(0), ColorB.Evaluate(0), ColorA.Evaluate(0)),
