@@ -22,7 +22,7 @@ namespace Incendia
         public static Animation VictimAnimation()
         {
             List<Frame> f = new List<Frame>();
-            f.Add(new Frame("Victim", new Microsoft.Xna.Framework.Rectangle(0, 0, 0, 0)));
+            f.Add(new Frame("Victim1", new Microsoft.Xna.Framework.Rectangle(0, 0, 0, 0)));
             Animation a = new Animation(.05, f);
             return a;
         }

@@ -74,6 +74,9 @@ namespace Incendia
         {
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            if (Position.X < 0 || Position.X >= map.WorldLimits.X * Global.PixelsPerTile || Position.Y < 0 || Position.Y >= map.WorldLimits.Y * Global.PixelsPerTile)
+                Age = Lifetime = 1;
+
             if (Velocity.X > 0)
             {
                 //Find the set of tiles that our movement will intersect with
