@@ -39,5 +39,21 @@ namespace Incendia
             Material = material;
             State = state;
         }
+
+        /// <summary>
+        /// Fights fire and returns whether there was fire to fight
+        /// </summary>
+        /// <returns></returns>
+        public bool HitByWater()
+        {
+            if (State == FireState.Burning)
+            {
+                State = FireState.Unburned;
+                return true;
+            }
+            Flammability /= 1.001f;
+            return false;
+
+        }
     }
 }

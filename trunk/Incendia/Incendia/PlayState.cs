@@ -87,6 +87,12 @@ namespace Incendia
             fireHose.MaxDirection = _player.Rotation + NozzleWidthInRadians();
 
             fireHose.Update(gameTime, this, shootingWater && !TileIsSolid((int)Math.Floor(fireHose.EmitterLocation.X), (int)Math.Floor(fireHose.EmitterLocation.Y)));
+
+            foreach (Particle p in fireHose.ParticleReturner)
+            {
+                if (grid[(int)Math.Floor(p.Position.X / Global.PixelsPerTile), (int)Math.Floor(p.Position.Y / Global.PixelsPerTile)].HitByWater())
+                    p.Age = (p.Lifetime - p.Age) / 2;
+            }
         }
 
         public void Draw(SpriteBatch batch)
