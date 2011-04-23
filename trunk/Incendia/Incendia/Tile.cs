@@ -33,9 +33,8 @@ namespace Incendia
             _solid = solid;
         }
 
-        public void UpdateBurning(float flammability, int material, FireState state)
+        public void UpdateBurning(int material, FireState state)
         {
-            Flammability = flammability;
             Material = material;
             State = state;
         }

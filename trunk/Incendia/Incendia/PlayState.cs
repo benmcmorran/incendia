@@ -74,6 +74,7 @@ namespace Incendia
         public void Update(GameTime gameTime)
         {
             TakeInput();
+            FireSimulation.Step(grid);
             _player.Update(gameTime, this);
             //Locked camera
             //camera.Location = _player.Position * Global.PixelsPerTile;
