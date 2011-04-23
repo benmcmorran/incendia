@@ -10,6 +10,8 @@ namespace Incendia
     class ParticleSystem
     {
         private List<Particle> particles = new List<Particle>();
+ 
+        public List<Particle> ParticleReturner{get{return particles;}}
 
         public List<IParticleManipulator> Manipulators { get; set; }
 
