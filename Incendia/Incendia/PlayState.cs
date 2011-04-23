@@ -20,6 +20,7 @@ namespace Incendia
         List<Character> victims = new List<Character>();
         Nozzle selectedNozzle;
         ParticleSystem fireHose;
+        ParticleSystem fire;
         bool shootingWater;
 
         public PlayState(int horizontalTiles, int verticalTiles, Viewport viewport)
@@ -27,14 +28,13 @@ namespace Incendia
             _player = Generator.PlayerSprite(new Vector2(5, 5));
             WorldLimits = new Vector2((float)horizontalTiles, (float)verticalTiles);
             grid = new Tile[horizontalTiles,verticalTiles];
-
             selectedNozzle = Nozzle.narrow;
 
             for (int x = horizontalTiles - 1; x >= 0; x--)
             {
                 for (int y = verticalTiles - 1; y >= 0; y--)
                 {
-                    grid[x,y] = Generator.TiledFloor();
+                    grid[x,y] = Generator.WoodenFloor();
                 }
             }
 
@@ -53,6 +53,8 @@ namespace Incendia
             grid[13, 12] = Generator.Wall();
             grid[13, 13] = Generator.Wall();
 
+            grid[4, 5].State = FireState.Burning;
+
             victims.Add(Generator.VictimSprite(new Vector2(4, 4)));
 
             Curve c = new Curve();
@@ -66,7 +68,16 @@ namespace Incendia
             a.Keys.Add(new CurveKey(.3f, 1));
             a.Keys.Add(new CurveKey(.7f, 1));
             a.Keys.Add(new CurveKey(1, 0));
-            fireHose = new ParticleSystem(Global.Textures["Particle"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a); 
+            fireHose = new ParticleSystem(Global.Textures["Water"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a);
+
+             a = new Curve();
+            a.Keys.Add(new CurveKey(0, 0));
+            a.Keys.Add(new CurveKey(.3f, .5f));
+            a.Keys.Add(new CurveKey(.7f, .5f));
+            a.Keys.Add(new CurveKey(1, 0));
+            
+            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(3), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a);
+
 
 
             camera = new Camera2D();
@@ -85,12 +96,26 @@ namespace Incendia
             camera.Location += ((_player.PositionCenter * Global.PixelsPerTile) - camera.Location) * 0.1f;
             
             UpdateVictims(gameTime);
-            fireHose.EmitterLocation = (_player.PositionCenter + new Vector2((float)Math.Cos(_player.Rotation), (float)Math.Sin(_player.Rotation)) / 2) * Global.PixelsPerTile;
+            fireHose.EmitterLocations.Clear(); 
+            fireHose.EmitterLocations.Add((_player.PositionCenter + new Vector2((float)Math.Cos(_player.Rotation), (float)Math.Sin(_player.Rotation)) / 2) * Global.PixelsPerTile);
             fireHose.MinDirection = _player.Rotation - NozzleWidthInRadians();
             fireHose.MaxDirection = _player.Rotation + NozzleWidthInRadians();
 
-            fireHose.Update(gameTime, this, shootingWater && !TileIsSolid((int)Math.Floor(fireHose.EmitterLocation.X), (int)Math.Floor(fireHose.EmitterLocation.Y)));
+            fire.EmitterLocations.Clear();
+            for (int x = 0; x < WorldLimits.X; x++)
+            {
+                for (int y = 0; y < WorldLimits.Y; y++)
+                {
 
+                    if (grid[x,y].State == FireState.Burning && camera.IsInView(new Rectangle((int)(x * Global.PixelsPerTile), (int)(y * Global.PixelsPerTile), (int)Global.PixelsPerTile, (int)Global.PixelsPerTile), viewport))
+                    {
+                        fire.EmitterLocations.Add(new Vector2((float)x + .5f, (float) y + .5f) * Global.PixelsPerTile);
+                    }
+                }
+            }
+
+            fireHose.Update(gameTime, this, shootingWater && !TileIsSolid((int)Math.Floor(fireHose.EmitterLocations[0].X), (int)Math.Floor(fireHose.EmitterLocations[0].Y)));
+            fire.Update(gameTime, this, true);
             foreach (Particle p in fireHose.ParticleReturner)
             {
                 if (grid[(int)Math.Floor(p.Position.X / Global.PixelsPerTile), (int)Math.Floor(p.Position.Y / Global.PixelsPerTile)].HitByWater())
@@ -107,11 +132,17 @@ namespace Incendia
             {
                 for (int y = 0; y < WorldLimits.Y; y++)
                 {
+                    
                     if (camera.IsInView(new Rectangle((int)(x * Global.PixelsPerTile), (int)(y * Global.PixelsPerTile), (int)Global.PixelsPerTile, (int)Global.PixelsPerTile), viewport))
-                        batch.Draw(Global.Textures[grid[x, y].Texture], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[grid[x, y].Texture].Width, SpriteEffects.None, 0);
+                    {
+                            batch.Draw(Global.Textures[grid[x, y].Texture], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[grid[x, y].Texture].Width, SpriteEffects.None, 0);
+                    }
                 }
             }
 
+
+            fireHose.Draw(batch);
+            fire.Draw(batch);
             _player.Draw(batch);
 
 

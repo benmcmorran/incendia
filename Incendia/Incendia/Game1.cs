@@ -55,8 +55,11 @@ namespace Incendia
             Global.Textures = new Dictionary<string, Texture2D>();
             Global.Textures.Add("Player", Content.Load<Texture2D>(@"Images\PlayerProxy"));
             Global.Textures.Add("Wall", Content.Load<Texture2D>(@"Images\WallProxy")); //This image MUST be square
-            Global.Textures.Add("TiledFloor", Content.Load<Texture2D>(@"Images\TiledFloorProxy")); //This image MUST be square
-            Global.Textures.Add("Particle", Content.Load<Texture2D>(@"Images\ParticleProxy")); //This image MUST be square
+            Global.Textures.Add("WoodenFloor", Content.Load<Texture2D>(@"Images\WoodenFloor")); //This image MUST be square
+            Global.Textures.Add("WoodenFloorb", Content.Load<Texture2D>(@"Images\WoodenFloorb")); //This image MUST be square
+            Global.Textures.Add("Water", Content.Load<Texture2D>(@"Images\ParticleProxy")); //This image MUST be square
+            Global.Textures.Add("Fire", Content.Load<Texture2D>(@"Images\FireProxy")); //This image MUST be square
+
             Global.Textures.Add("Victim1", Content.Load<Texture2D>(@"Images\VictimProxy")); //This image MUST be square
 
 
