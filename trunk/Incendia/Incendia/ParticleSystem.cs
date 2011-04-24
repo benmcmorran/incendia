@@ -39,6 +39,8 @@ namespace Incendia
         public Curve ColorB { get; set; }
         public Curve ColorA { get; set; }
 
+        bool HurtsPlayer;
+
         private Random random = new Random();
         private float emissionError;
 
@@ -48,10 +50,11 @@ namespace Incendia
             Curve speed, float speedDeviation,
             Curve rotation, float rotationDeviation,
             Curve scale, float scaleDeviation,
-            Curve colorR, Curve colorG, Curve colorB, Curve colorA)
+            Curve colorR, Curve colorG, Curve colorB, Curve colorA, bool hurts)
         {
             Manipulators = new List<IParticleManipulator>();
 
+            HurtsPlayer = hurts;
             Texture = texture;
 
             EmitterLocations = new List<Vector2>();
@@ -84,10 +87,11 @@ namespace Incendia
             Curve speed, float speedDeviation,
             Curve rotation, float rotationDeviation,
             Curve scale, float scaleDeviation,
-            Curve colorR, Curve colorG, Curve colorB, Curve colorA)
+            Curve colorR, Curve colorG, Curve colorB, Curve colorA, bool hurts)
         {
             Manipulators = new List<IParticleManipulator>();
 
+            HurtsPlayer = hurts;
             Texture = texture;
 
             EmitterLocations = emitterLocations;
@@ -173,7 +177,7 @@ namespace Incendia
                 Utils.Vector2FromSpeedAndDirection(Speed.Evaluate(0) * speedMultiplier, random.NextFloat(MinDirection, MaxDirection)),
                 speedMultiplier, Rotation.Evaluate(0) * rotationMultiplier, rotationMultiplier,
                 new Color(ColorR.Evaluate(0), ColorG.Evaluate(0), ColorB.Evaluate(0), ColorA.Evaluate(0)),
-                Scale.Evaluate(0), scaleMultiplier, random.NextFloat(MinLifetime, MaxLifetime));
+                Scale.Evaluate(0), scaleMultiplier, random.NextFloat(MinLifetime, MaxLifetime), HurtsPlayer);
         }
     }
 }

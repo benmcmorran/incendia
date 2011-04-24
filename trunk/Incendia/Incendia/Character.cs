@@ -12,7 +12,7 @@ namespace Incendia
     /// </summary>
     class Character : Sprite
     {
-        public int Hp { get; set; }
+        public float Hp { get; set; }
 
         public Character(Vector2 position, Animation defaultAnimation, double lifeTime, int hp)
             : base(position, defaultAnimation, lifeTime)

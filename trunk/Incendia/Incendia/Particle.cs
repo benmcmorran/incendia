@@ -26,6 +26,8 @@ namespace Incendia
         public float Age { get; set; }
         public float Lifetime { get; set; }
 
+        public bool HurtsPlayer;
+
         public Vector2 TopRightCorner { 
             get { return new Vector2(Position.X - Texture.Width / 2 * Scale, Position.Y - Texture.Height / 2 * Scale); }
             set { Position = new Vector2(value.X + Texture.Width / 2 * Scale, value.Y + Texture.Height * Scale); }
@@ -36,7 +38,7 @@ namespace Incendia
             float rotation, float rotationMultiplier,
             Color color,
             float scale, float scaleMultiplier,
-            float lifetime)
+            float lifetime, bool hurtsPlayer)
         {
             Texture = texture;
 
@@ -53,6 +55,8 @@ namespace Incendia
             ScaleMultiplier = scaleMultiplier;
 
             Lifetime = lifetime;
+
+            HurtsPlayer = hurtsPlayer;
         }
 
         public void Update(GameTime gameTime, PlayState map)
@@ -61,6 +65,7 @@ namespace Incendia
             Position += delta * Velocity;
             Age += delta;
             CollideWithWalls(gameTime, map);
+            CollideWithCharacters(map);
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -196,6 +201,13 @@ namespace Incendia
                     }
                 }
             }
+        }
+
+        void CollideWithCharacters(PlayState map)
+        {
+            Rectanglef r = new Rectanglef(map._player.Position.X * Global.PixelsPerTile, map._player.Position.Y * Global.PixelsPerTile, map._player.Visual.Width * Global.PixelsPerTile, map._player.Visual.Height * Global.PixelsPerTile);
+            if (HurtsPlayer && Position.X + Texture.Width >= r.X && Position.X <= r.X + r.Width && Position.Y + Texture.Height >= r.Y && Position.Y <= r.X + r.Height)
+                map._player.Hp -= Age / Lifetime;
         }
     }
 }
