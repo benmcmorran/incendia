@@ -53,10 +53,21 @@ namespace Incendia
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Global.Textures = new Dictionary<string, Texture2D>();
-            Global.Textures.Add("Player", Content.Load<Texture2D>(@"Images\PlayerProxy"));
-            Global.Textures.Add("Wall", Content.Load<Texture2D>(@"Images\WallProxy")); //This image MUST be square
-            Global.Textures.Add("WoodenFloor", Content.Load<Texture2D>(@"Images\WoodenFloor")); //This image MUST be square
-            Global.Textures.Add("WoodenFloorb", Content.Load<Texture2D>(@"Images\WoodenFloorb")); //This image MUST be square
+            Global.Textures.Add("Player", Content.Load<Texture2D>(@"Images\Guy"));
+            Global.Textures.Add("Carpet 1", Content.Load<Texture2D>(@"Images\Carpet")); //This image MUST be square
+            Global.Textures.Add("Carpet 1b", Content.Load<Texture2D>(@"Images\Carpetb")); //This image MUST be square
+            Global.Textures.Add("Carpet 2", Content.Load<Texture2D>(@"Images\Carpet2")); //This image MUST be square
+            Global.Textures.Add("Carpet 2b", Content.Load<Texture2D>(@"Images\Carpetb")); //This image MUST be square
+            Global.Textures.Add("Tiled Floor 1", Content.Load<Texture2D>(@"Images\Tiles")); //This image MUST be square
+            Global.Textures.Add("Tiled Floor 1b", Content.Load<Texture2D>(@"Images\Tiles")); //This image MUST be square
+            Global.Textures.Add("Tiled Floor 2", Content.Load<Texture2D>(@"Images\Tiles2")); //This image MUST be square
+            Global.Textures.Add("Tiled Floor 2b", Content.Load<Texture2D>(@"Images\Tiles2")); //This image MUST be square
+            Global.Textures.Add("Wooden Floor", Content.Load<Texture2D>(@"Images\woodenfloor")); //This image MUST be square
+            Global.Textures.Add("Wooden Floorb", Content.Load<Texture2D>(@"Images\woodenfloorb")); //This image MUST be square
+            Global.Textures.Add("Granite Wall", Content.Load<Texture2D>(@"Images\granitewall")); //This image MUST be square
+            Global.Textures.Add("Granite Wallb", Content.Load<Texture2D>(@"Images\granitewall")); //This image MUST be square
+            Global.Textures.Add("Wooden Wall", Content.Load<Texture2D>(@"Images\woodwall")); //This image MUST be square
+            Global.Textures.Add("Wooden Wallb", Content.Load<Texture2D>(@"Images\woodwallb")); //This image MUST be square
             Global.Textures.Add("Water", Content.Load<Texture2D>(@"Images\ParticleProxy")); //This image MUST be square
             Global.Textures.Add("Fire", Content.Load<Texture2D>(@"Images\FireProxy")); //This image MUST be square
 
@@ -64,7 +75,8 @@ namespace Incendia
 
 
             Global.Font = Content.Load<SpriteFont>(@"SpriteFont1");
-            _playState = new PlayState(25, 20, GraphicsDevice.Viewport);
+            _playState = new PlayState("test", GraphicsDevice.Viewport);
+            _playState.Grid[5, 5].State = FireState.Burning;
         }
 
         /// <summary>
