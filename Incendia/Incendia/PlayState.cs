@@ -80,7 +80,7 @@ namespace Incendia
             a.Keys.Add(new CurveKey(.3f, 1));
             a.Keys.Add(new CurveKey(.7f, 1));
             a.Keys.Add(new CurveKey(1, 0));
-            fireHose = new ParticleSystem(Global.Textures["Water"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a);
+            fireHose = new ParticleSystem(Global.Textures["Water"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, false);
 
             a = new Curve();
             a.Keys.Add(new CurveKey(0, 0));
@@ -88,7 +88,7 @@ namespace Incendia
             a.Keys.Add(new CurveKey(.7f, .5f));
             a.Keys.Add(new CurveKey(1, 0));
             
-            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(3), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a);
+            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(3), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true);
 
             camera = new Camera2D();
             this.viewport = viewport;
@@ -109,7 +109,7 @@ namespace Incendia
                 }
             }
 
-            //Here is where we define our grid for testing purposes only
+            //Here is where we define our Grid for testing purposes only
             Grid[0, 1] = Generator.WoodenWall();
             Grid[0, 0] = Generator.WoodenWall();
             Grid[1, 0] = Generator.WoodenWall();
@@ -191,7 +191,7 @@ namespace Incendia
             foreach (Particle p in fireHose.ParticleReturner)
             {
                 p.KeepinBounds(this);
-                if (p.Age < p.Lifetime && grid[(int)Math.Floor(p.Position.X / Global.PixelsPerTile), (int)Math.Floor(p.Position.Y / Global.PixelsPerTile)].HitByWater())
+                if (p.Age < p.Lifetime && Grid[(int)Math.Floor(p.Position.X / Global.PixelsPerTile), (int)Math.Floor(p.Position.Y / Global.PixelsPerTile)].HitByWater())
                     p.Age = (p.Lifetime - p.Age) / 2;
             }
         }
@@ -200,7 +200,7 @@ namespace Incendia
         {
             batch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.ViewTransformationMatrix(viewport));
 
-            //Draw what is on the grid
+            //Draw what is on the Grid
             for (int x = 0; x < WorldLimits.X; x++)
             {
                 for (int y = 0; y < WorldLimits.Y; y++)

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Incendia
 {
-    class Tile
+    public class Tile
     {
         public float Flammability { get; private set; }
         public int Material { get; private set; }

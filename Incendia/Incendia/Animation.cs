@@ -9,7 +9,7 @@ namespace Incendia
     /// <summary>
     /// Holds and animates a set of frames.
     /// </summary>
-    class Animation
+    public class Animation
     {
         List<Frame> _frames;
         double _frameTime;

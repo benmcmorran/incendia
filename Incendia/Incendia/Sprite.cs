@@ -11,7 +11,7 @@ namespace Incendia
     /// <summary>
     /// You guys know what this is.
     /// </summary>
-    class Sprite
+    public class Sprite
     {
 
         protected float _rotation; // In radians
