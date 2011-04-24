@@ -18,7 +18,7 @@ namespace Incendia
         public Tile[,] Grid { get; private set; }
         Camera2D camera;
         Viewport viewport;
-        List<Character> victims = new List<Character>();
+        public List<Character> Victims = new List<Character>();
         Nozzle selectedNozzle;
         ParticleSystem fireHose;
         ParticleSystem fire;
@@ -126,7 +126,7 @@ namespace Incendia
 
             Grid[4, 5].State = FireState.Burning;
 
-            victims.Add(Generator.VictimSprite(new Vector2(4, 4)));
+            Victims.Add(Generator.VictimSprite(new Vector2(4, 14)));
 
             Curve c = new Curve();
             c.Keys.Add(new CurveKey(0, 0));
@@ -147,7 +147,7 @@ namespace Incendia
             a.Keys.Add(new CurveKey(.7f, .5f));
             a.Keys.Add(new CurveKey(1, 0));
             
-            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(3), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true);
+            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 8, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(3), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true);
 
 
 
@@ -187,9 +187,11 @@ namespace Incendia
 
             fireHose.Update(gameTime, this, shootingWater && !TileIsSolid((int)Math.Floor(fireHose.EmitterLocations[0].X / Global.PixelsPerTile), (int)Math.Floor(fireHose.EmitterLocations[0].Y / Global.PixelsPerTile)));
             fire.Update(gameTime, this, true);
+           
             foreach (Particle p in fireHose.ParticleReturner)
             {
-                if (Grid[(int)Math.Floor(p.Position.X / Global.PixelsPerTile), (int)Math.Floor(p.Position.Y / Global.PixelsPerTile)].HitByWater())
+                p.KeepinBounds(this);
+                if (p.Age < p.Lifetime && grid[(int)Math.Floor(p.Position.X / Global.PixelsPerTile), (int)Math.Floor(p.Position.Y / Global.PixelsPerTile)].HitByWater())
                     p.Age = (p.Lifetime - p.Age) / 2;
             }
         }
@@ -217,7 +219,7 @@ namespace Incendia
             _player.Draw(batch);
 
 
-            foreach (Character c in victims)
+            foreach (Character c in Victims)
             {
                 c.Draw(batch);
             }
@@ -254,6 +256,11 @@ namespace Incendia
             else
                 _player.SetVelocityX(0);
 
+            _player.Velocity.Normalize();
+            _player.SetVelocityX(_player.Velocity.X * 1.5f);
+            _player.SetVelocityY(_player.Velocity.Y * 1.5f);
+
+
             shootingWater = Input.MouseLeftClicked();
             
             if(Input.KeyJustPressed(Keys.Space))
@@ -262,16 +269,26 @@ namespace Incendia
 
         void UpdateVictims(GameTime gameTime)
         {
-            for (int i = victims.Count - 1; i >= 0; i--)
+            for (int i = Victims.Count - 1; i >= 0; i--)
             {
-                if (victims[i].Hp <= 0)
+                if (Victims[i].Hp <= 0)
                 {
-                    victims.RemoveAt(i);
+                    Victims.RemoveAt(i);
+                    continue;
+                }
+                else if (Victims[i].Escaped)
+                {
+                    Victims.RemoveAt(i);
+                    continue;
+                }
+                else if (Victims[i].Rescued)
+                {
+                    Victims.RemoveAt(i);
                     continue;
                 }
 
-                victims[i].Update(gameTime, this);
-                victims[i].Behave(this);
+                Victims[i].Update(gameTime, this);
+                Victims[i].Behave(this);
             }
         }
 

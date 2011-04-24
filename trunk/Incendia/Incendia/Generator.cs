@@ -24,6 +24,7 @@ namespace Incendia
             List<Frame> f = new List<Frame>();
             f.Add(new Frame("Victim1", new Microsoft.Xna.Framework.Rectangle(0, 0, 0, 0)));
             Animation a = new Animation(.05, f);
+            
             return a;
         }
 
@@ -36,7 +37,7 @@ namespace Incendia
 
         public static Character VictimSprite(Vector2 location)
         {
-            Character c = new Character(location * Global.PixelsPerTile, VictimAnimation(), -1, 100);
+            Character c = new Character(location * Global.PixelsPerTile, VictimAnimation(), -1, 1000000);
             return c;
         }
 
