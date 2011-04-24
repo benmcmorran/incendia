@@ -12,7 +12,7 @@ namespace Incendia
     public enum Nozzle {wide, medium, narrow }
     class PlayState : IGraph<int>
     {
-        Character _player;
+        public Character _player;
         public Vector2 WorldLimits { get; set; }
         Tile[,] grid;
         Camera2D camera;
@@ -68,7 +68,7 @@ namespace Incendia
             a.Keys.Add(new CurveKey(.3f, 1));
             a.Keys.Add(new CurveKey(.7f, 1));
             a.Keys.Add(new CurveKey(1, 0));
-            fireHose = new ParticleSystem(Global.Textures["Water"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a);
+            fireHose = new ParticleSystem(Global.Textures["Water"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, false);
 
              a = new Curve();
             a.Keys.Add(new CurveKey(0, 0));
@@ -76,7 +76,7 @@ namespace Incendia
             a.Keys.Add(new CurveKey(.7f, .5f));
             a.Keys.Add(new CurveKey(1, 0));
             
-            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(3), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a);
+            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(3), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true);
 
 
 
@@ -156,7 +156,14 @@ namespace Incendia
             //batch.Draw(Global.Textures["Wall"], _player.PositionCenter * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, new Vector2(1,1), SpriteEffects.None, 0);
             _player.Draw(batch);
 
+
             batch.End();
+
+            batch.Begin();
+            batch.DrawString(Global.Font, _player.Hp.ToString(), new Vector2(50, 50), Color.Bisque);
+            batch.End();
+
+
         }
 
         void TakeInput()
