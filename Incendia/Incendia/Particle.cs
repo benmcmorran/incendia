@@ -28,7 +28,7 @@ namespace Incendia
 
         public bool HurtsPlayer;
 
-        public Vector2 TopRightCorner { 
+        public Vector2 TopLeftCorner { 
             get { return new Vector2(Position.X - Texture.Width / 2 * Scale, Position.Y - Texture.Height / 2 * Scale); }
             set { Position = new Vector2(value.X + Texture.Width / 2 * Scale, value.Y + Texture.Height * Scale); }
         }
@@ -61,11 +61,11 @@ namespace Incendia
 
         public void Update(GameTime gameTime, PlayState map)
         {
+            CollideWithCharacters(map);
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Position += delta * Velocity;
             Age += delta;
             CollideWithWalls(gameTime, map);
-            CollideWithCharacters(map);
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -74,18 +74,22 @@ namespace Incendia
             spriteBatch.Draw(Texture, Position, null, Color, Rotation, origin, Scale, SpriteEffects.None, 0);
         }
 
+        public void KeepinBounds(PlayState map)
+        {
+            if (Position.X < 0 || Position.X >= map.WorldLimits.X * Global.PixelsPerTile || Position.Y < 0 || Position.Y >= map.WorldLimits.Y * Global.PixelsPerTile)
+                Age = Lifetime = 1;
+        }
         //Assuming you are not already colliding with a tile
         private void CollideWithWalls(GameTime gameTime, PlayState map)
         {
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (Position.X < 0 || Position.X >= map.WorldLimits.X * Global.PixelsPerTile || Position.Y < 0 || Position.Y >= map.WorldLimits.Y * Global.PixelsPerTile)
-                Age = Lifetime = 1;
+            KeepinBounds(map);
 
             if (Velocity.X > 0)
             {
                 //Find the set of tiles that our movement will intersect with
-                Rectanglef movementBox = new Rectanglef((TopRightCorner.X + Texture.Width * Scale), TopRightCorner.Y, Velocity.X * (float)gameTime.ElapsedGameTime.TotalSeconds, Texture.Height * Scale);
+                Rectanglef movementBox = new Rectanglef((TopLeftCorner.X + Texture.Width * Scale), TopLeftCorner.Y, Velocity.X * (float)gameTime.ElapsedGameTime.TotalSeconds, Texture.Height * Scale);
                 movementBox.Multiply(1 / Global.PixelsPerTile);
                 int minX = (int)Math.Floor(movementBox.X);
                 int maxX = (int)Math.Floor(movementBox.X + movementBox.Width);
@@ -114,7 +118,7 @@ namespace Incendia
             else if (Velocity.X < 0)
             {
                 //Find the set of tiles that our movement will intersect with
-                Rectanglef movementBox = new Rectanglef((TopRightCorner.X + (Velocity.X * (float)gameTime.ElapsedGameTime.TotalSeconds)), TopRightCorner.Y, -Velocity.X * (float)gameTime.ElapsedGameTime.TotalSeconds, Texture.Height * Scale);
+                Rectanglef movementBox = new Rectanglef((TopLeftCorner.X + (Velocity.X * (float)gameTime.ElapsedGameTime.TotalSeconds)), TopLeftCorner.Y, -Velocity.X * (float)gameTime.ElapsedGameTime.TotalSeconds, Texture.Height * Scale);
                 movementBox.Multiply(1 / Global.PixelsPerTile);
                 int maxX = (int)Math.Floor(movementBox.X);
                 int minX = (int)Math.Floor(movementBox.X + movementBox.Width);
@@ -145,7 +149,7 @@ namespace Incendia
             if (Velocity.Y > 0)
             {
                 //Find the set of tiles that our movement will intersect with
-                Rectanglef movementBox = new Rectanglef(TopRightCorner.X, TopRightCorner.Y + Texture.Height * Scale, Texture.Width * Scale, Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                Rectanglef movementBox = new Rectanglef(TopLeftCorner.X, TopLeftCorner.Y + Texture.Height * Scale, Texture.Width * Scale, Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds);
                 movementBox.Multiply(1 / Global.PixelsPerTile);
                 int minX = (int)Math.Floor(movementBox.X);
                 int maxX = (int)Math.Floor(movementBox.X + movementBox.Width);
@@ -175,7 +179,7 @@ namespace Incendia
             else if (Velocity.Y < 0)
             {
                 //Find the set of tiles that our movement will intersect with
-                Rectanglef movementBox = new Rectanglef(TopRightCorner.X, TopRightCorner.Y + (Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds), Texture.Width * Scale, -Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                Rectanglef movementBox = new Rectanglef(TopLeftCorner.X, TopLeftCorner.Y + (Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds), Texture.Width * Scale, -Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds);
                 movementBox.Multiply(1 / Global.PixelsPerTile);
                 int minX = (int)Math.Floor(movementBox.X);
                 int maxX = (int)Math.Floor(movementBox.X + movementBox.Width);
@@ -206,8 +210,19 @@ namespace Incendia
         void CollideWithCharacters(PlayState map)
         {
             Rectanglef r = new Rectanglef(map._player.Position.X * Global.PixelsPerTile, map._player.Position.Y * Global.PixelsPerTile, map._player.Visual.Width * Global.PixelsPerTile, map._player.Visual.Height * Global.PixelsPerTile);
-            if (HurtsPlayer && Position.X + Texture.Width >= r.X && Position.X <= r.X + r.Width && Position.Y + Texture.Height >= r.Y && Position.Y <= r.X + r.Height)
+
+            
+            if (HurtsPlayer && TopLeftCorner.X + Texture.Width * Scale >= r.X && TopLeftCorner.X <= r.X + r.Width && TopLeftCorner.Y + Texture.Height * Scale >= r.Y && TopLeftCorner.Y <= r.Y + r.Height)
                 map._player.Hp -= Age / Lifetime;
+
+            foreach (Character c in map.Victims)
+            {
+                r = new Rectanglef(c.Position.X * Global.PixelsPerTile, c.Position.Y * Global.PixelsPerTile, c.Visual.Width * Global.PixelsPerTile, c.Visual.Height * Global.PixelsPerTile);
+                if (HurtsPlayer && TopLeftCorner.X + Texture.Width >= r.X && TopLeftCorner.X <= r.X + r.Width && TopLeftCorner.Y + Texture.Height >= r.Y && TopLeftCorner.Y <= r.Y + r.Height)
+                    c.Hp -= Age / Lifetime;
+
+            }
         }
+
     }
 }

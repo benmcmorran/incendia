@@ -13,6 +13,8 @@ namespace Incendia
     class Character : Sprite
     {
         public float Hp { get; set; }
+        public bool Rescued = false;
+        public bool Escaped = false;
 
         public Character(Vector2 position, Animation defaultAnimation, double lifeTime, int hp)
             : base(position, defaultAnimation, lifeTime)
@@ -157,6 +159,22 @@ namespace Incendia
         /// <param name="map"></param>
         public void Behave(PlayState map)
         {
+            Rectanglef r = new Rectanglef(map._player.Position.X, map._player.Position.Y, map._player.Visual.Width, map._player.Visual.Height);
+            if (Position.X + Visual.Width * Scale >= r.X && Position.X <= r.X + r.Width && Position.Y + Visual.Height * Scale >= r.Y && Position.Y <= r.Y + r.Height)
+                Rescued = true;
+            _velocity = Vector2.Zero;
+            for (int x = (int)map.WorldLimits.X - 1; x >= 0; x--)
+            {
+                for (int y = (int)map.WorldLimits.Y - 1; y >= 0; y--)
+                {
+                    float angle = (float)Math.Atan2(y - (double)Position.Y, x - (double)Position.X);
+                    if(map.grid[x,y].State == FireState.Burning)
+                        _velocity -= new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                }
+            }
+            _velocity.Normalize();
+            _velocity *= 5;
+
         }
 
     }
