@@ -10,7 +10,7 @@ namespace Incendia
     /// <summary>
     /// A person, such as the player or victims
     /// </summary>
-    class Character : Sprite
+    public class Character : Sprite
     {
         public float Hp { get; set; }
         public bool Rescued = false;
@@ -168,7 +168,7 @@ namespace Incendia
                 for (int y = (int)map.WorldLimits.Y - 1; y >= 0; y--)
                 {
                     float angle = (float)Math.Atan2(y - (double)Position.Y, x - (double)Position.X);
-                    if(map.grid[x,y].State == FireState.Burning)
+                    if(map.Grid[x,y].State == FireState.Burning)
                         _velocity -= new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
                 }
             }

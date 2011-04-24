@@ -9,7 +9,7 @@ namespace Incendia
     /// <summary>
     /// Represents the possible states of a cell in a FireSimulation.
     /// </summary>
-    enum FireState
+    public enum FireState
     {
         /// <summary>
         /// Nonflammable cells are not affected by simulation.

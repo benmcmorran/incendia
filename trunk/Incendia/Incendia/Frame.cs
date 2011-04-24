@@ -11,7 +11,7 @@ namespace Incendia
     /// <summary>
     /// A frame for animation. Holds a string which is an index for a texture in Global and a rectangle which is how much of the texture to draw, like a window on the texture.
     /// </summary>
-    class Frame
+    public class Frame
     {
         string _textureIndex; //A key used to find a texture in Global
         Rectangle _rectangle;

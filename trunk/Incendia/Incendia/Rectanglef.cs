@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Incendia
 {
-    struct Rectanglef
+   public struct Rectanglef
     {
         //In tiles
         public float X;
