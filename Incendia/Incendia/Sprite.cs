@@ -69,7 +69,7 @@ namespace Incendia
         {
             if (Dead)
                 return;
-            _defaultAnimation.GetFrame().Draw(new Vector2(_position.X + Visual.Width * (Global.PixelsPerTile / 2), _position.Y + Visual.Height * (Global.PixelsPerTile / 2)), batch, _rotation, _scale, _effects);
+            _defaultAnimation.GetFrame().Draw(new Vector2(_position.X + Visual.Width * (Global.PixelsPerTile / 2), _position.Y + Visual.Height * (Global.PixelsPerTile / 2)), batch, _rotation +(float)Math.PI, _scale, _effects);
         }
 
 
