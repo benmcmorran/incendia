@@ -5,16 +5,17 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System.IO;
 
 
 namespace Incendia
 {
     public enum Nozzle {wide, medium, narrow }
-    class PlayState : IGraph<int>
+    public class PlayState : IGraph<int>
     {
         public Character _player;
         public Vector2 WorldLimits { get; set; }
-        Tile[,] grid;
+        public Tile[,] Grid { get; private set; }
         Camera2D camera;
         Viewport viewport;
         List<Character> victims = new List<Character>();
@@ -23,37 +24,107 @@ namespace Incendia
         ParticleSystem fire;
         bool shootingWater;
 
+        public PlayState(string name, Viewport viewport)
+        {
+            StreamReader reader = new StreamReader(System.Environment.CurrentDirectory + "\\Levels\\" + name + ".txt");
+            string[] lines = reader.ReadToEnd().Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            reader.Close();
+
+            string[] playerPosition = lines[0].Split(new char[] { ',' });
+            _player = Generator.PlayerSprite(new Vector2(Convert.ToInt32(playerPosition[0].Trim()), Convert.ToInt32(playerPosition[1].Trim())));
+        
+            string[] size = lines[1].Split(new char[] { ',' });
+            WorldLimits = new Vector2(Convert.ToInt32(size[0].Trim()), Convert.ToInt32(size[1].Trim()));
+            Grid = new Tile[Convert.ToInt32(size[0].Trim()), Convert.ToInt32(size[1].Trim())];
+            selectedNozzle = Nozzle.narrow;
+
+            for (int x = 0; x < Grid.GetLength(0); x++)
+            {
+                for (int y = 0; y < Grid.GetLength(1); y++)
+                {
+                    switch (lines[y + 2][x])
+                    {
+                        case '1':
+                            Grid[x, y] = Generator.Carpet1();
+                            break;
+                        case '2':
+                            Grid[x, y] = Generator.Carpet2();
+                            break;
+                        case '3':
+                            Grid[x, y] = Generator.TiledFloor1();
+                            break;
+                        case '4':
+                            Grid[x, y] = Generator.TiledFloor2();
+                            break;
+                        case '5':
+                            Grid[x, y] = Generator.WoodenFloor();
+                            break;
+                        case 'G':
+                            Grid[x, y] = Generator.GraniteWall();
+                            break;
+                        case 'W':
+                            Grid[x, y] = Generator.WoodenWall();
+                            break;
+                    }
+                }
+            }
+
+            Curve c = new Curve();
+            c.Keys.Add(new CurveKey(0, 0));
+            c.Keys.Add(new CurveKey(.3f, 1));
+            c.Keys.Add(new CurveKey(.7f, 1));
+            c.Keys.Add(new CurveKey(1, 0));
+
+            Curve a = new Curve();
+            a.Keys.Add(new CurveKey(0, 0));
+            a.Keys.Add(new CurveKey(.3f, 1));
+            a.Keys.Add(new CurveKey(.7f, 1));
+            a.Keys.Add(new CurveKey(1, 0));
+            fireHose = new ParticleSystem(Global.Textures["Water"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a);
+
+            a = new Curve();
+            a.Keys.Add(new CurveKey(0, 0));
+            a.Keys.Add(new CurveKey(.3f, .5f));
+            a.Keys.Add(new CurveKey(.7f, .5f));
+            a.Keys.Add(new CurveKey(1, 0));
+            
+            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(3), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a);
+
+            camera = new Camera2D();
+            this.viewport = viewport;
+        }
+        
         public PlayState(int horizontalTiles, int verticalTiles, Viewport viewport)
         {
             _player = Generator.PlayerSprite(new Vector2(5, 5));
             WorldLimits = new Vector2((float)horizontalTiles, (float)verticalTiles);
-            grid = new Tile[horizontalTiles,verticalTiles];
+            Grid = new Tile[horizontalTiles,verticalTiles];
             selectedNozzle = Nozzle.narrow;
 
             for (int x = horizontalTiles - 1; x >= 0; x--)
             {
                 for (int y = verticalTiles - 1; y >= 0; y--)
                 {
-                    grid[x,y] = Generator.WoodenFloor();
+                    Grid[x,y] = Generator.WoodenFloor();
                 }
             }
 
             //Here is where we define our grid for testing purposes only
-            grid[0, 1] = Generator.Wall();
-            grid[0, 0] = Generator.Wall();
-            grid[1, 0] = Generator.Wall();
-            grid[19, 14] = Generator.Wall();
-            grid[18, 13] = Generator.Wall();
-            grid[10, 10] = Generator.Wall();
-            grid[10, 11] = Generator.Wall();
-            grid[10, 12] = Generator.Wall();
-            grid[10, 13] = Generator.Wall();
-            grid[13, 10] = Generator.Wall();
-            grid[12, 11] = Generator.Wall();
-            grid[13, 12] = Generator.Wall();
-            grid[13, 13] = Generator.Wall();
+            Grid[0, 1] = Generator.WoodenWall();
+            Grid[0, 0] = Generator.WoodenWall();
+            Grid[1, 0] = Generator.WoodenWall();
+            Grid[19, 14] = Generator.WoodenWall();
+            Grid[18, 13] = Generator.WoodenWall();
+            Grid[10, 10] = Generator.WoodenWall();
+            Grid[10, 11] = Generator.WoodenWall();
+            Grid[10, 12] = Generator.WoodenWall();
+            Grid[10, 13] = Generator.WoodenWall();
+            Grid[13, 10] = Generator.WoodenWall();
+            Grid[12, 11] = Generator.WoodenWall();
+            Grid[13, 12] = Generator.WoodenWall();
+            Grid[13, 13] = Generator.WoodenWall();
 
-            grid[4, 5].State = FireState.Burning;
+            Grid[4, 5].State = FireState.Burning;
 
             victims.Add(Generator.VictimSprite(new Vector2(4, 4)));
 
@@ -70,7 +141,7 @@ namespace Incendia
             a.Keys.Add(new CurveKey(1, 0));
             fireHose = new ParticleSystem(Global.Textures["Water"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, false);
 
-             a = new Curve();
+            a = new Curve();
             a.Keys.Add(new CurveKey(0, 0));
             a.Keys.Add(new CurveKey(.3f, .5f));
             a.Keys.Add(new CurveKey(.7f, .5f));
@@ -87,7 +158,7 @@ namespace Incendia
         public void Update(GameTime gameTime)
         {
             TakeInput();
-            FireSimulation.Step(grid);
+            FireSimulation.Step(Grid);
             _player.Update(gameTime, this);
             //Locked camera
             //camera.Location = _player.Position * Global.PixelsPerTile;
@@ -107,18 +178,18 @@ namespace Incendia
                 for (int y = 0; y < WorldLimits.Y; y++)
                 {
 
-                    if (grid[x,y].State == FireState.Burning && camera.IsInView(new Rectangle((int)(x * Global.PixelsPerTile), (int)(y * Global.PixelsPerTile), (int)Global.PixelsPerTile, (int)Global.PixelsPerTile), viewport))
+                    if (Grid[x,y].State == FireState.Burning && camera.IsInView(new Rectangle((int)(x * Global.PixelsPerTile), (int)(y * Global.PixelsPerTile), (int)Global.PixelsPerTile, (int)Global.PixelsPerTile), viewport))
                     {
                         fire.EmitterLocations.Add(new Vector2((float)x + .5f, (float) y + .5f) * Global.PixelsPerTile);
                     }
                 }
             }
 
-            fireHose.Update(gameTime, this, shootingWater && !TileIsSolid((int)Math.Floor(fireHose.EmitterLocations[0].X), (int)Math.Floor(fireHose.EmitterLocations[0].Y)));
+            fireHose.Update(gameTime, this, shootingWater && !TileIsSolid((int)Math.Floor(fireHose.EmitterLocations[0].X / Global.PixelsPerTile), (int)Math.Floor(fireHose.EmitterLocations[0].Y / Global.PixelsPerTile)));
             fire.Update(gameTime, this, true);
             foreach (Particle p in fireHose.ParticleReturner)
             {
-                if (grid[(int)Math.Floor(p.Position.X / Global.PixelsPerTile), (int)Math.Floor(p.Position.Y / Global.PixelsPerTile)].HitByWater())
+                if (Grid[(int)Math.Floor(p.Position.X / Global.PixelsPerTile), (int)Math.Floor(p.Position.Y / Global.PixelsPerTile)].HitByWater())
                     p.Age = (p.Lifetime - p.Age) / 2;
             }
         }
@@ -135,7 +206,7 @@ namespace Incendia
                     
                     if (camera.IsInView(new Rectangle((int)(x * Global.PixelsPerTile), (int)(y * Global.PixelsPerTile), (int)Global.PixelsPerTile, (int)Global.PixelsPerTile), viewport))
                     {
-                            batch.Draw(Global.Textures[grid[x, y].Texture], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[grid[x, y].Texture].Width, SpriteEffects.None, 0);
+                            batch.Draw(Global.Textures[Grid[x, y].Texture], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[Grid[x, y].Texture].Width, SpriteEffects.None, 0);
                     }
                 }
             }
@@ -208,7 +279,7 @@ namespace Incendia
         {
             x = (int)MathHelper.Clamp(x, 0, WorldLimits.X - 1);
             y = (int)MathHelper.Clamp(y, 0, WorldLimits.Y -1);
-            return grid[x,y].Solid;
+            return Grid[x,y].Solid;
         }
 
         float NozzleWidthInRadians()
@@ -251,11 +322,11 @@ namespace Incendia
             // N, S, E, and W cells have a cost of one
             if (y > 0 && TileIsSolid(x, y - 1))
                 neighbors.Add(IntFromCell(x, y - 1), 1);
-            if (y < grid.GetLength(1) - 1 && TileIsSolid(x, y + 1))
+            if (y < Grid.GetLength(1) - 1 && TileIsSolid(x, y + 1))
                 neighbors.Add(IntFromCell(x, y + 1), 1);
             if (x > 0 && TileIsSolid(x - 1, y))
                 neighbors.Add(IntFromCell(x - 1, y), 1);
-            if (x < grid.GetLength(0) - 1 && TileIsSolid(x + 1, y))
+            if (x < Grid.GetLength(0) - 1 && TileIsSolid(x + 1, y))
                 neighbors.Add(IntFromCell(x + 1, y), 1);
 
             return neighbors;
@@ -263,13 +334,13 @@ namespace Incendia
 
         public void CellFromInt(int node, out int x, out int y)
         {
-            x = node % grid.GetLength(0);
-            y = node / grid.GetLength(0);
+            x = node % Grid.GetLength(0);
+            y = node / Grid.GetLength(0);
         }
 
         public int IntFromCell(int x, int y)
         {
-            return y * grid.GetLength(0) + x;
+            return y * Grid.GetLength(0) + x;
         }
     }
 }

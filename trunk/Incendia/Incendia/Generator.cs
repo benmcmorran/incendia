@@ -40,20 +40,39 @@ namespace Incendia
             return c;
         }
 
+        public static Tile Carpet1()
+        {
+            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Carpet 1", false);
+        }
+
+        public static Tile Carpet2()
+        {
+            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Carpet 2", false);
+        }
+
+        public static Tile TiledFloor1()
+        {
+            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Tiled Floor 1", false);
+        }
+
+        public static Tile TiledFloor2()
+        {
+            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Tiled Floor 2", false);
+        }
 
         public static Tile WoodenFloor()
         {
-            Tile t = new Tile(0.004f, Global.rand.Next(2000,3000), FireState.Unburned, "WoodenFloor", false);
-            return t;
+            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Wooden Floor", false);
         }
 
-        public static Tile Wall()
+        public static Tile GraniteWall()
         {
-            Tile t = new Tile(0.00f, 100, FireState.Nonflammable, "Wall", true);
-            return t;
+            return new Tile(0, 0, FireState.Nonflammable, "Granite Wall", true);
         }
 
-
-        
+        public static Tile WoodenWall()
+        {
+            return new Tile(.0001f, Global.rand.Next(2000, 3000), FireState.Unburned, "Wooden Wall", true);
+        }
     }
 }
