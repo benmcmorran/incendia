@@ -20,7 +20,7 @@ namespace Incendia
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        PlayState _playState;
+        StateManager stateManager;
 
         public Game1()
         {
@@ -75,8 +75,9 @@ namespace Incendia
 
 
             Global.Font = Content.Load<SpriteFont>(@"SpriteFont1");
-            _playState = new PlayState("test", GraphicsDevice.Viewport);
-            _playState.Grid[5, 5].State = FireState.Burning;
+
+            stateManager = new StateManager();
+            stateManager.SetState(new MenuState(stateManager, GraphicsDevice.Viewport));
         }
 
         /// <summary>
@@ -99,7 +100,7 @@ namespace Incendia
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            _playState.Update(gameTime);
+            stateManager.Update(gameTime);
             Input.Update();
 
             base.Update(gameTime);
@@ -113,7 +114,7 @@ namespace Incendia
         {
             GraphicsDevice.Clear(Color.White);
 
-            _playState.Draw(spriteBatch);
+            stateManager.Draw(spriteBatch);
 
             base.Draw(gameTime);
         }

@@ -114,9 +114,11 @@
     <Compile Include="Frame.cs" />
     <Compile Include="Generator.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="IGameState.cs" />
     <Compile Include="IGraph.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="IParticleManipulator.cs" />
+    <Compile Include="MenuState.cs" />
     <Compile Include="Particle.cs" />
     <Compile Include="ParticleSystem.cs" />
     <Compile Include="Pathfinder.cs" />
@@ -127,6 +129,7 @@
     <Compile Include="RectangleParticleManipulator.cs" />
     <Compile Include="Rectanglef.cs" />
     <Compile Include="Sprite.cs" />
+    <Compile Include="StateManager.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
