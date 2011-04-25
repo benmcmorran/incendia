@@ -11,7 +11,7 @@ using System.IO;
 namespace Incendia
 {
     public enum Nozzle {wide, medium, narrow }
-    public class PlayState : IGraph<int>
+    public class PlayState : IGraph<int>, IGameState
     {
         public Character _player;
         public Vector2 WorldLimits { get; set; }
@@ -23,9 +23,12 @@ namespace Incendia
         ParticleSystem fireHose;
         ParticleSystem fire;
         bool shootingWater;
+        StateManager manager;
 
-        public PlayState(string name, Viewport viewport)
+        public PlayState(StateManager manager, string name, Viewport viewport)
         {
+            this.manager = manager;
+
             StreamReader reader = new StreamReader(System.Environment.CurrentDirectory + "\\Levels\\" + name + ".txt");
             string[] lines = reader.ReadToEnd().Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             reader.Close();
@@ -94,8 +97,10 @@ namespace Incendia
             this.viewport = viewport;
         }
         
-        public PlayState(int horizontalTiles, int verticalTiles, Viewport viewport)
+        public PlayState(StateManager manager, int horizontalTiles, int verticalTiles, Viewport viewport)
         {
+            this.manager = manager;
+
             _player = Generator.PlayerSprite(new Vector2(5, 5));
             WorldLimits = new Vector2((float)horizontalTiles, (float)verticalTiles);
             Grid = new Tile[horizontalTiles,verticalTiles];
@@ -265,6 +270,9 @@ namespace Incendia
             
             if(Input.KeyJustPressed(Keys.Space))
                 ItterateNozzle();
+
+            if (Input.KeyJustPressed(Keys.Escape))
+                manager.SetState(new MenuState(manager, viewport));
         }
 
         void UpdateVictims(GameTime gameTime)
