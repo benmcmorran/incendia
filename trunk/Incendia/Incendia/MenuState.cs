@@ -39,7 +39,7 @@ namespace Incendia
             {
                 PlayState playState = new PlayState(manager, levels[currentLevel], viewport);
                 playState.Grid[5, 5].State = FireState.Burning;
-                manager.SetState(playState);
+                manager.SetTransitionState(playState);
             }
         }
 

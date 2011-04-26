@@ -41,6 +41,11 @@ namespace Incendia
             return c;
         }
 
+        public static Tile EmptyTile()
+        {
+            return new Tile(0, 0, FireState.Nonflammable, "Empty", false);
+        }
+        
         public static Tile Carpet1()
         {
             return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Carpet 1", false);

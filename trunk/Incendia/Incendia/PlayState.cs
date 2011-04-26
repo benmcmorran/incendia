@@ -47,6 +47,9 @@ namespace Incendia
                 {
                     switch (lines[y + 2][x])
                     {
+                        case ' ':
+                            Grid[x, y] = Generator.EmptyTile();
+                            break;
                         case '1':
                             Grid[x, y] = Generator.Carpet1();
                             break;
@@ -169,7 +172,7 @@ namespace Incendia
             //camera.Location = _player.Position * Global.PixelsPerTile;
 
             //Smooth camera
-            camera.Location += ((_player.PositionCenter * Global.PixelsPerTile) - camera.Location) * 0.1f;
+            camera.Location += ((_player.PositionCenter * Global.PixelsPerTile) - camera.Location) * 0.03f;
             
             UpdateVictims(gameTime);
             fireHose.EmitterLocations.Clear(); 
@@ -272,7 +275,7 @@ namespace Incendia
                 ItterateNozzle();
 
             if (Input.KeyJustPressed(Keys.Escape))
-                manager.SetState(new MenuState(manager, viewport));
+                manager.SetTransitionState(new MenuState(manager, viewport));
         }
 
         void UpdateVictims(GameTime gameTime)
