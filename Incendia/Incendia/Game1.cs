@@ -54,6 +54,7 @@ namespace Incendia
 
             Global.Textures = new Dictionary<string, Texture2D>();
             Global.Textures.Add("Player", Content.Load<Texture2D>(@"Images\Guy"));
+            Global.Textures.Add("Empty", Content.Load<Texture2D>(@"Images\Empty"));
             Global.Textures.Add("Carpet 1", Content.Load<Texture2D>(@"Images\Carpet")); //This image MUST be square
             Global.Textures.Add("Carpet 1b", Content.Load<Texture2D>(@"Images\Carpetb")); //This image MUST be square
             Global.Textures.Add("Carpet 2", Content.Load<Texture2D>(@"Images\Carpet2")); //This image MUST be square
@@ -73,6 +74,7 @@ namespace Incendia
 
             Global.Textures.Add("Victim1", Content.Load<Texture2D>(@"Images\VictimProxy")); //This image MUST be square
 
+            Global.Textures.Add("Fade", Content.Load<Texture2D>(@"Images\Fade"));
 
             Global.Font = Content.Load<SpriteFont>(@"SpriteFont1");
 
