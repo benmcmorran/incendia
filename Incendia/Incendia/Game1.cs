@@ -71,6 +71,11 @@ namespace Incendia
             Global.Textures.Add("Wooden Wallb", Content.Load<Texture2D>(@"Images\woodwallb")); //This image MUST be square
             Global.Textures.Add("Water", Content.Load<Texture2D>(@"Images\ParticleProxy")); //This image MUST be square
             Global.Textures.Add("Fire", Content.Load<Texture2D>(@"Images\FireProxy")); //This image MUST be square
+            Global.Textures.Add("HpBarOutline", Content.Load<Texture2D>(@"Images\HpBarOutline")); 
+            Global.Textures.Add("HpBit", Content.Load<Texture2D>(@"Images\HpBit"));
+            Global.Textures.Add("HpBitFlash", Content.Load<Texture2D>(@"Images\HpBitFlash")); 
+
+
 
             Global.Textures.Add("Victim1", Content.Load<Texture2D>(@"Images\VictimProxy")); //This image MUST be square
 

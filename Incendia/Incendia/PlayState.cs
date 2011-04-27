@@ -24,6 +24,7 @@ namespace Incendia
         ParticleSystem fire;
         bool shootingWater;
         StateManager manager;
+        public double hpBarFlashing = 0;
 
         public PlayState(StateManager manager, string name, Viewport viewport)
         {
@@ -75,6 +76,9 @@ namespace Incendia
                 }
             }
 
+            Victims.Add(Generator.VictimSprite(new Vector2(4, 14)));
+
+
             Curve c = new Curve();
             c.Keys.Add(new CurveKey(0, 0));
             c.Keys.Add(new CurveKey(.3f, 1));
@@ -94,7 +98,7 @@ namespace Incendia
             a.Keys.Add(new CurveKey(.7f, .5f));
             a.Keys.Add(new CurveKey(1, 0));
             
-            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(3), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true);
+            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true);
 
             camera = new Camera2D();
             this.viewport = viewport;
@@ -165,6 +169,11 @@ namespace Incendia
 
         public void Update(GameTime gameTime)
         {
+            if (_player.Hp <= 0 && ! manager.isTransitioning)
+            {
+                manager.SetTransitionState(new MenuState(manager, viewport));
+            }
+
             TakeInput();
             FireSimulation.Step(Grid);
             _player.Update(gameTime, this);
@@ -173,7 +182,10 @@ namespace Incendia
 
             //Smooth camera
             camera.Location += ((_player.PositionCenter * Global.PixelsPerTile) - camera.Location) * 0.03f;
-            
+
+            if (hpBarFlashing > 0)
+                hpBarFlashing -= gameTime.ElapsedGameTime.TotalSeconds;
+
             UpdateVictims(gameTime);
             fireHose.EmitterLocations.Clear(); 
             fireHose.EmitterLocations.Add((_player.PositionCenter + new Vector2((float)Math.Cos(_player.Rotation), (float)Math.Sin(_player.Rotation)) / 2) * Global.PixelsPerTile);
@@ -241,7 +253,15 @@ namespace Incendia
             batch.End();
 
             batch.Begin();
-            batch.DrawString(Global.Font, _player.Hp.ToString(), new Vector2(50, 50), Color.Bisque);
+            //batch.DrawString(Global.Font, _player.Hp.ToString(), new Vector2(50, 50), Color.Bisque);
+            batch.Draw(Global.Textures["HpBarOutline"], new Vector2(50,50), null, Color.White, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+            for (int hp = 0; hp <= _player.Hp; hp++)
+            {
+                if (hpBarFlashing > 0)
+                    batch.Draw(Global.Textures["HpBitFlash"], new Vector2(53 + hp, 53), null, Color.White, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+                else
+                    batch.Draw(Global.Textures["HpBit"], new Vector2(53 + hp, 53), null, Color.White, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+            }
             batch.End();
 
 
@@ -287,12 +307,22 @@ namespace Incendia
                     Victims.RemoveAt(i);
                     continue;
                 }
-                else if (Victims[i].Escaped)
+
+                for (int x = (int)Math.Floor(Victims[i].Position.X); x <= Math.Floor(Victims[i].Position.X + Victims[i].Visual.Width); x++)
                 {
-                    Victims.RemoveAt(i);
-                    continue;
+                    for (int y = (int)Math.Floor(Victims[i].Position.Y); y <= Math.Floor(Victims[i].Position.Y + Victims[i].Visual.Height); y++)
+                    {
+                        if (Grid[x, y].Outside)
+                        {
+                            Victims[i].Escaped = true;
+                            x = 9999;
+                            break;
+                        }
+                    }
                 }
-                else if (Victims[i].Rescued)
+
+                
+                if (Victims[i].Rescued)
                 {
                     Victims.RemoveAt(i);
                     continue;

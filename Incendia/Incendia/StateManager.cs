@@ -12,8 +12,8 @@ namespace Incendia
         IGameState state;
         IGameState transitionState;
         TimeSpan elapsedTransition;
-        bool isTransitioning = false;
-        const float halfTransitionTime = .5f;
+        public bool isTransitioning = false;
+        const float halfTransitionTime = 2f;
 
         public void SetState(IGameState state)
         {
@@ -39,6 +39,7 @@ namespace Incendia
             }
 
             state.Update(gameTime);
+            
         }
 
         public void Draw(SpriteBatch spriteBatch)

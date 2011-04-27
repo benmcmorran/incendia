@@ -82,6 +82,8 @@ namespace Incendia
         //Assuming you are not already colliding with a tile
         private void CollideWithWalls(GameTime gameTime, PlayState map)
         {
+            if (HurtsPlayer)
+                return;
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             KeepinBounds(map);
@@ -211,16 +213,18 @@ namespace Incendia
         {
             Rectanglef r = new Rectanglef(map._player.Position.X * Global.PixelsPerTile, map._player.Position.Y * Global.PixelsPerTile, map._player.Visual.Width * Global.PixelsPerTile, map._player.Visual.Height * Global.PixelsPerTile);
 
-            
+
             if (HurtsPlayer && TopLeftCorner.X + Texture.Width * Scale >= r.X && TopLeftCorner.X <= r.X + r.Width && TopLeftCorner.Y + Texture.Height * Scale >= r.Y && TopLeftCorner.Y <= r.Y + r.Height)
-                map._player.Hp -= Age / Lifetime;
+            {
+                map._player.Hp -= .02f;
+                map.hpBarFlashing = .1f;
+            }
 
             foreach (Character c in map.Victims)
             {
                 r = new Rectanglef(c.Position.X * Global.PixelsPerTile, c.Position.Y * Global.PixelsPerTile, c.Visual.Width * Global.PixelsPerTile, c.Visual.Height * Global.PixelsPerTile);
                 if (HurtsPlayer && TopLeftCorner.X + Texture.Width >= r.X && TopLeftCorner.X <= r.X + r.Width && TopLeftCorner.Y + Texture.Height >= r.Y && TopLeftCorner.Y <= r.Y + r.Height)
-                    c.Hp -= Age / Lifetime;
-
+                    c.Hp -= Lifetime / Age ;
             }
         }
 
