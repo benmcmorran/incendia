@@ -161,7 +161,7 @@ namespace Incendia
         {
             Rectanglef r = new Rectanglef(map._player.Position.X, map._player.Position.Y, map._player.Visual.Width, map._player.Visual.Height);
             if (Position.X + Visual.Width * Scale >= r.X && Position.X <= r.X + r.Width && Position.Y + Visual.Height * Scale >= r.Y && Position.Y <= r.Y + r.Height)
-                Rescued = true;
+                Rescued = false;
             _velocity = Vector2.Zero;
             for (int x = (int)map.WorldLimits.X - 1; x >= 0; x--)
             {
@@ -169,11 +169,17 @@ namespace Incendia
                 {
                     float angle = (float)Math.Atan2(y - (double)Position.Y, x - (double)Position.X);
                     if(map.Grid[x,y].State == FireState.Burning)
-                        _velocity -= new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                        _velocity -= new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) / (float)Math.Sqrt((x - Position.X) * (x - Position.X) + (y - Position.Y) * (y - Position.Y));
                 }
             }
+            if (Math.Sqrt((map._player.Position.X - Position.X) * (map._player.Position.X - Position.X) + (map._player.Position.Y - Position.Y) * (map._player.Position.Y - Position.Y)) <= 50)
+            {
+                float anglep = (float)Math.Atan2(map._player.Position.Y - (double)Position.Y, map._player.Position.X - (double)Position.X);
+                _velocity += new Vector2((float)Math.Cos(anglep), (float)Math.Sin(anglep)) * 20 / (float)Math.Sqrt((map._player.Position.X - Position.X) * (map._player.Position.X - Position.X) + (map._player.Position.Y - Position.Y) * (map._player.Position.Y - Position.Y));
+            }
+
             _velocity.Normalize();
-            _velocity *= 5;
+            _velocity *= 2;
 
         }
 

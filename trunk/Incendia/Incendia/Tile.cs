@@ -13,6 +13,7 @@ namespace Incendia
         public string _texture;
         public bool _solid;
         public bool Solid { get { return _solid && State != FireState.Burnt; } }
+        public bool Outside {get; set;}
         public string Texture
         {
             get
@@ -24,7 +25,7 @@ namespace Incendia
             }
         }
 
-        public Tile(float flammability, int material, FireState state, string texture, bool solid)
+        public Tile(float flammability, int material, FireState state, string texture, bool solid, bool outside)
         {
             Flammability = flammability;
             Material = material;

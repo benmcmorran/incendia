@@ -31,54 +31,54 @@ namespace Incendia
 
         public static Character PlayerSprite(Vector2 location)
         {
-            Character c = new Character(location * Global.PixelsPerTile, PlayerAnimation(), -1, 1000);
+            Character c = new Character(location * Global.PixelsPerTile, PlayerAnimation(), -1, 194);
             return c;
         }
 
         public static Character VictimSprite(Vector2 location)
         {
-            Character c = new Character(location * Global.PixelsPerTile, VictimAnimation(), -1, 1000000);
+            Character c = new Character(location * Global.PixelsPerTile, VictimAnimation(), -1, 400);
             return c;
         }
 
         public static Tile EmptyTile()
         {
-            return new Tile(0, 0, FireState.Nonflammable, "Empty", false);
+            return new Tile(0, 0, FireState.Nonflammable, "Empty", false, false);
         }
         
         public static Tile Carpet1()
         {
-            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Carpet 1", false);
+            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Carpet 1", false,false);
         }
 
         public static Tile Carpet2()
         {
-            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Carpet 2", false);
+            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Carpet 2", false, false);
         }
 
         public static Tile TiledFloor1()
         {
-            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Tiled Floor 1", false);
+            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Tiled Floor 1", false, false);
         }
 
         public static Tile TiledFloor2()
         {
-            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Tiled Floor 2", false);
+            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Tiled Floor 2", false, true);
         }
 
         public static Tile WoodenFloor()
         {
-            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Wooden Floor", false);
+            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Wooden Floor", false, false);
         }
 
         public static Tile GraniteWall()
         {
-            return new Tile(0, 0, FireState.Nonflammable, "Granite Wall", true);
+            return new Tile(0, 0, FireState.Nonflammable, "Granite Wall", true,false);
         }
 
         public static Tile WoodenWall()
         {
-            return new Tile(.0001f, Global.rand.Next(2000, 3000), FireState.Unburned, "Wooden Wall", true);
+            return new Tile(.0001f, Global.rand.Next(2000, 3000), FireState.Unburned, "Wooden Wall", true, false);
         }
     }
 }
