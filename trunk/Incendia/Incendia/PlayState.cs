@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
 
-
 namespace Incendia
 {
     public enum Nozzle {wide, medium, narrow }
@@ -39,7 +38,7 @@ namespace Incendia
 
             string[] playerPosition = lines[0].Split(new char[] { ',' });
             _player = Generator.PlayerSprite(new Vector2(Convert.ToInt32(playerPosition[0].Trim()), Convert.ToInt32(playerPosition[1].Trim())));
-        
+
             string[] size = lines[1].Split(new char[] { ',' });
             WorldLimits = new Vector2(Convert.ToInt32(size[0].Trim()), Convert.ToInt32(size[1].Trim()));
             Grid = new Tile[Convert.ToInt32(size[0].Trim()), Convert.ToInt32(size[1].Trim())];
@@ -49,41 +48,49 @@ namespace Incendia
             {
                 for (int y = 0; y < Grid.GetLength(1); y++)
                 {
+                    Layer1TileType layer1 = Layer1TileType.Outside;
+                    Layer2TileType layer2 = Layer2TileType.Empty;
+                    Layer3TileType layer3 = Layer3TileType.Empty;
+
                     switch (lines[y + 2][x])
                     {
-                        case ' ':
-                            Grid[x, y] = Generator.EmptyTile();
-                            break;
-                        case '1':
-                            Grid[x, y] = Generator.Carpet1();
-                            break;
-                        case '2':
-                            Grid[x, y] = Generator.Carpet2();
-                            break;
-                        case '3':
-                            Grid[x, y] = Generator.TiledFloor1();
-                            break;
-                        case '4':
-                            Grid[x, y] = Generator.TiledFloor2();
-                            break;
-                        case '5':
-                            Grid[x, y] = Generator.WoodenFloor();
-                            break;
-                        case 'G':
-                            Grid[x, y] = Generator.GraniteWall();
-                            break;
-                        case 'W':
-                            Grid[x, y] = Generator.WoodenWall();
-                            break;
-                        case 'g':
-                            Grid[x, y] = Generator.GasCan();
-                            break;
+                        case 'O': layer1 = Layer1TileType.Outside; break;
+                        case '1': layer1 = Layer1TileType.Carpet1; break;
+                        case '2': layer1 = Layer1TileType.Carpet2; break;
+                        case '3': layer1 = Layer1TileType.Tile1; break;
+                        case '4': layer1 = Layer1TileType.Tile2; break;
+                        case '5': layer1 = Layer1TileType.WoodFloor; break;
+                        case 'G': layer1 = Layer1TileType.GraniteWall; break;
+                        case 'W': layer1 = Layer1TileType.WoodWall; break;
                     }
+
+                    switch (lines[y + Grid.GetLength(1) + 3][x])
+                    {
+                        case '-': layer2 = Layer2TileType.Empty; break;
+                        case 'E': layer2 = Layer2TileType.Desk; break;
+                        case 'S': layer2 = Layer2TileType.Sofa; break;
+                        case 'P': layer2 = Layer2TileType.Plant; break;
+                        case 'C': layer2 = Layer2TileType.OpenVerticalDoor; break;
+                        case 'D': layer2 = Layer2TileType.ClosedVerticalDoor; break;
+                        case 'T': layer2 = Layer2TileType.TrashCan; break;
+                        case 'N': layer2 = Layer2TileType.Newspaper; break;
+                        case 'F': layer2 = Layer2TileType.Flammables; break;
+                    }
+
+                    switch (lines[y + 2 * Grid.GetLength(1) + 4][x])
+                    {
+                        case 'C': layer3 = Layer3TileType.Computer; break;
+                        case 'B': layer3 = Layer3TileType.Blotter; break;
+                        case '-': layer3 = Layer3TileType.Empty; break;
+                        case 'P': layer3 = Layer3TileType.Plant; break;
+                        case 'L': layer3 = Layer3TileType.Laptop; break;
+                    }
+
+                    Grid[x, y] = new Tile(layer1, layer2, layer3);
                 }
             }
 
             Victims.Add(Generator.VictimSprite(new Vector2(4, 14)));
-
 
             Curve c = new Curve();
             c.Keys.Add(new CurveKey(0, 0));
@@ -103,7 +110,7 @@ namespace Incendia
             a.Keys.Add(new CurveKey(.3f, .5f));
             a.Keys.Add(new CurveKey(.7f, .5f));
             a.Keys.Add(new CurveKey(1, 0));
-            
+
             fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true, 1);
             explosions = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, 1f, 2f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true, 10);
 
@@ -111,8 +118,6 @@ namespace Incendia
             camera = new Camera2D();
             this.viewport = viewport;
         }
-        
-        
 
         public void Update(GameTime gameTime)
         {
@@ -180,7 +185,9 @@ namespace Incendia
                     
                     if (camera.IsInView(new Rectangle((int)(x * Global.PixelsPerTile), (int)(y * Global.PixelsPerTile), (int)Global.PixelsPerTile, (int)Global.PixelsPerTile), viewport))
                     {
-                            batch.Draw(Global.Textures[Grid[x, y].Texture], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[Grid[x, y].Texture].Width, SpriteEffects.None, 0);
+                            batch.Draw(Global.Textures[Grid[x, y].Texture1], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[Grid[x, y].Texture1].Width, SpriteEffects.None, 0);
+                            batch.Draw(Global.Textures[Grid[x, y].Texture2], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[Grid[x, y].Texture2].Width, SpriteEffects.None, 0);
+                            batch.Draw(Global.Textures[Grid[x, y].Texture3], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[Grid[x, y].Texture3].Width, SpriteEffects.None, 0);
                     }
                 }
             }
@@ -417,3 +424,4 @@ namespace Incendia
         }
     }
 }
+
