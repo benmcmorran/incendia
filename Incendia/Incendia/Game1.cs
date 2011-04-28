@@ -57,6 +57,8 @@ namespace Incendia
             Global.Textures = new Dictionary<string, Texture2D>();
             Global.Textures.Add("Player", Content.Load<Texture2D>(@"Images\Guy"));
             Global.Textures.Add("Empty", Content.Load<Texture2D>(@"Images\Empty"));
+            Global.Textures.Add("Emptyb", Content.Load<Texture2D>(@"Images\Empty"));
+
             Global.Textures.Add("Carpet 1", Content.Load<Texture2D>(@"Images\Carpet")); //This image MUST be square
             Global.Textures.Add("Carpet 1b", Content.Load<Texture2D>(@"Images\Carpetb")); //This image MUST be square
             Global.Textures.Add("Carpet 2", Content.Load<Texture2D>(@"Images\Carpet2")); //This image MUST be square
@@ -71,6 +73,38 @@ namespace Incendia
             Global.Textures.Add("Granite Wallb", Content.Load<Texture2D>(@"Images\granitewall")); //This image MUST be square
             Global.Textures.Add("Wooden Wall", Content.Load<Texture2D>(@"Images\woodwall")); //This image MUST be square
             Global.Textures.Add("Wooden Wallb", Content.Load<Texture2D>(@"Images\woodwallb")); //This image MUST be square
+
+            Global.Textures.Add("Desk", Content.Load<Texture2D>(@"Images\deskcorner")); //This image MUST be square
+            Global.Textures.Add("Deskb", Content.Load<Texture2D>(@"Images\deskcornerb")); //This image MUST be square
+            Global.Textures.Add("Couch", Content.Load<Texture2D>(@"Images\Couch")); //This image MUST be square
+            Global.Textures.Add("Couchb", Content.Load<Texture2D>(@"Images\Couchb")); //This image MUST be square
+            Global.Textures.Add("Plant", Content.Load<Texture2D>(@"Images\Plant")); //This image MUST be square
+            Global.Textures.Add("Plantb", Content.Load<Texture2D>(@"Images\Plantburnt")); //This image MUST be square
+            Global.Textures.Add("Open Horizontal Door", Content.Load<Texture2D>(@"Images\dooropen")); //This image MUST be square
+            Global.Textures.Add("Open Horizontal Doorb", Content.Load<Texture2D>(@"Images\doorb")); //This image MUST be square
+            Global.Textures.Add("Open Vertical Door", Content.Load<Texture2D>(@"Images\door")); //This image MUST be square
+            Global.Textures.Add("Open Vertical Doorb", Content.Load<Texture2D>(@"Images\doorb")); //This image MUST be square
+            Global.Textures.Add("Closed Horizontal Door", Content.Load<Texture2D>(@"Images\door")); //This image MUST be square
+            Global.Textures.Add("Closed Horizontal Doorb", Content.Load<Texture2D>(@"Images\doorb")); //This image MUST be square
+            Global.Textures.Add("Closed Vertical Door", Content.Load<Texture2D>(@"Images\dooropen")); //This image MUST be square
+            Global.Textures.Add("Closed Vertical Doorb", Content.Load<Texture2D>(@"Images\doorb")); //This image MUST be square
+            Global.Textures.Add("Trash Can", Content.Load<Texture2D>(@"Images\trashcan")); //This image MUST be square
+            Global.Textures.Add("Trash Canb", Content.Load<Texture2D>(@"Images\trashcanb")); //This image MUST be square
+            Global.Textures.Add("Newspaper", Content.Load<Texture2D>(@"Images\newspaper")); //This image MUST be square
+            Global.Textures.Add("Newspaperb", Content.Load<Texture2D>(@"Images\newspaperb")); //This image MUST be square
+            Global.Textures.Add("Flammables", Content.Load<Texture2D>(@"Images\GasCan"));
+            Global.Textures.Add("Flammablesb", Content.Load<Texture2D>(@"Images\GasCanb")); 
+
+
+            Global.Textures.Add("Computer", Content.Load<Texture2D>(@"Images\Computer")); //This image MUST be square
+            Global.Textures.Add("Computerb", Content.Load<Texture2D>(@"Images\Computerb")); //This image MUST be square
+            Global.Textures.Add("Blotter", Content.Load<Texture2D>(@"Images\deskblotter")); //This image MUST be square
+            Global.Textures.Add("Blotterb", Content.Load<Texture2D>(@"Images\Empty")); //This image MUST be square
+            Global.Textures.Add("Desk Plant", Content.Load<Texture2D>(@"Images\deskplant")); //This image MUST be square
+            Global.Textures.Add("Desk Plantb", Content.Load<Texture2D>(@"Images\Empty")); //This image MUST be square
+            Global.Textures.Add("Laptop", Content.Load<Texture2D>(@"Images\laptop")); //This image MUST be square
+            Global.Textures.Add("Laptopb", Content.Load<Texture2D>(@"Images\laptopb")); //This image MUST be square
+
             Global.Textures.Add("Water", Content.Load<Texture2D>(@"Images\ParticleProxy")); //This image MUST be square
             Global.Textures.Add("Fire", Content.Load<Texture2D>(@"Images\FireProxy")); //This image MUST be square
             Global.Textures.Add("HpBarOutline", Content.Load<Texture2D>(@"Images\HpBarOutline")); 

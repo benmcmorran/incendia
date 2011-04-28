@@ -40,50 +40,5 @@ namespace Incendia
             Character c = new Character(location * Global.PixelsPerTile, VictimAnimation(), -1, 400);
             return c;
         }
-
-        public static Tile EmptyTile()
-        {
-            return new Tile(0, 0, FireState.Nonflammable, "Empty", false, false, false);
-        }
-        
-        public static Tile Carpet1()
-        {
-            return new Tile(1f, Global.rand.Next(20, 30), FireState.Unburned, "Carpet 1", false,false, false);
-        }
-
-        public static Tile Carpet2()
-        {
-            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Carpet 2", false, false, false);
-        }
-
-        public static Tile TiledFloor1()
-        {
-            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Tiled Floor 1", false, false, false);
-        }
-
-        public static Tile TiledFloor2()
-        {
-            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Tiled Floor 2", false, true, false);
-        }
-
-        public static Tile WoodenFloor()
-        {
-            return new Tile(.004f, Global.rand.Next(2000, 3000), FireState.Unburned, "Wooden Floor", false, false, false);
-        }
-
-        public static Tile GraniteWall()
-        {
-            return new Tile(0, 0, FireState.Nonflammable, "Granite Wall", true,false, false);
-        }
-
-        public static Tile WoodenWall()
-        {
-            return new Tile(.0001f, Global.rand.Next(2000, 3000), FireState.Unburned, "Wooden Wall", true, false, false);
-        }
-
-        public static Tile GasCan()
-        {
-            return new Tile(1f, Global.rand.Next(20, 30), FireState.Unburned, "Gas Can", false, false, true);
-        }
     }
 }
