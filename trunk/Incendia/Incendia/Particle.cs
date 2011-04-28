@@ -26,6 +26,8 @@ namespace Incendia
         public float Age { get; set; }
         public float Lifetime { get; set; }
 
+        public float DamageRatio;
+
         public bool HurtsPlayer;
 
         public Vector2 TopLeftCorner { 
@@ -38,7 +40,7 @@ namespace Incendia
             float rotation, float rotationMultiplier,
             Color color,
             float scale, float scaleMultiplier,
-            float lifetime, bool hurtsPlayer)
+            float lifetime, bool hurtsPlayer, float damageRatio )
         {
             Texture = texture;
 
@@ -57,6 +59,7 @@ namespace Incendia
             Lifetime = lifetime;
 
             HurtsPlayer = hurtsPlayer;
+            DamageRatio = damageRatio;
         }
 
         public void Update(GameTime gameTime, PlayState map)
@@ -216,7 +219,7 @@ namespace Incendia
 
             if (HurtsPlayer && TopLeftCorner.X + Texture.Width * Scale >= r.X && TopLeftCorner.X <= r.X + r.Width && TopLeftCorner.Y + Texture.Height * Scale >= r.Y && TopLeftCorner.Y <= r.Y + r.Height)
             {
-                map._player.Hp -= .02f;
+                map._player.Hp -= .02f * DamageRatio;
                 map.hpBarFlashing = .1f;
             }
 
@@ -224,7 +227,7 @@ namespace Incendia
             {
                 r = new Rectanglef(c.Position.X * Global.PixelsPerTile, c.Position.Y * Global.PixelsPerTile, c.Visual.Width * Global.PixelsPerTile, c.Visual.Height * Global.PixelsPerTile);
                 if (HurtsPlayer && TopLeftCorner.X + Texture.Width >= r.X && TopLeftCorner.X <= r.X + r.Width && TopLeftCorner.Y + Texture.Height >= r.Y && TopLeftCorner.Y <= r.Y + r.Height)
-                    c.Hp -= Lifetime / Age ;
+                    map._player.Hp -= .02f * DamageRatio;
             }
         }
 

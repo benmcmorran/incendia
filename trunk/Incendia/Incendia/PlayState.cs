@@ -22,9 +22,11 @@ namespace Incendia
         Nozzle selectedNozzle;
         ParticleSystem fireHose;
         ParticleSystem fire;
+        ParticleSystem explosions;
         bool shootingWater;
         StateManager manager;
         public double hpBarFlashing = 0;
+        List<float> explosionTime = new List<float>();
 
         public PlayState(StateManager manager, string name, Viewport viewport)
         {
@@ -72,6 +74,9 @@ namespace Incendia
                         case 'W':
                             Grid[x, y] = Generator.WoodenWall();
                             break;
+                        case 'g':
+                            Grid[x, y] = Generator.GasCan();
+                            break;
                     }
                 }
             }
@@ -90,7 +95,7 @@ namespace Incendia
             a.Keys.Add(new CurveKey(.3f, 1));
             a.Keys.Add(new CurveKey(.7f, 1));
             a.Keys.Add(new CurveKey(1, 0));
-            fireHose = new ParticleSystem(Global.Textures["Water"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, false);
+            fireHose = new ParticleSystem(Global.Textures["Water"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, false, 1);
 
             a = new Curve();
             a.Keys.Add(new CurveKey(0, 0));
@@ -98,74 +103,14 @@ namespace Incendia
             a.Keys.Add(new CurveKey(.7f, .5f));
             a.Keys.Add(new CurveKey(1, 0));
             
-            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true);
+            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true, 1);
+            explosions = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, 1f, 2f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true, 10);
 
             camera = new Camera2D();
             this.viewport = viewport;
         }
         
-        public PlayState(StateManager manager, int horizontalTiles, int verticalTiles, Viewport viewport)
-        {
-            this.manager = manager;
-
-            _player = Generator.PlayerSprite(new Vector2(5, 5));
-            WorldLimits = new Vector2((float)horizontalTiles, (float)verticalTiles);
-            Grid = new Tile[horizontalTiles,verticalTiles];
-            selectedNozzle = Nozzle.narrow;
-
-            for (int x = horizontalTiles - 1; x >= 0; x--)
-            {
-                for (int y = verticalTiles - 1; y >= 0; y--)
-                {
-                    Grid[x,y] = Generator.WoodenFloor();
-                }
-            }
-
-            //Here is where we define our Grid for testing purposes only
-            Grid[0, 1] = Generator.WoodenWall();
-            Grid[0, 0] = Generator.WoodenWall();
-            Grid[1, 0] = Generator.WoodenWall();
-            Grid[19, 14] = Generator.WoodenWall();
-            Grid[18, 13] = Generator.WoodenWall();
-            Grid[10, 10] = Generator.WoodenWall();
-            Grid[10, 11] = Generator.WoodenWall();
-            Grid[10, 12] = Generator.WoodenWall();
-            Grid[10, 13] = Generator.WoodenWall();
-            Grid[13, 10] = Generator.WoodenWall();
-            Grid[12, 11] = Generator.WoodenWall();
-            Grid[13, 12] = Generator.WoodenWall();
-            Grid[13, 13] = Generator.WoodenWall();
-
-            Grid[4, 5].State = FireState.Burning;
-
-            Victims.Add(Generator.VictimSprite(new Vector2(4, 14)));
-
-            Curve c = new Curve();
-            c.Keys.Add(new CurveKey(0, 0));
-            c.Keys.Add(new CurveKey(.3f, 1));
-            c.Keys.Add(new CurveKey(.7f, 1));
-            c.Keys.Add(new CurveKey(1, 0));
-
-            Curve a = new Curve();
-            a.Keys.Add(new CurveKey(0, 0));
-            a.Keys.Add(new CurveKey(.3f, 1));
-            a.Keys.Add(new CurveKey(.7f, 1));
-            a.Keys.Add(new CurveKey(1, 0));
-            fireHose = new ParticleSystem(Global.Textures["Water"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, false);
-
-            a = new Curve();
-            a.Keys.Add(new CurveKey(0, 0));
-            a.Keys.Add(new CurveKey(.3f, .5f));
-            a.Keys.Add(new CurveKey(.7f, .5f));
-            a.Keys.Add(new CurveKey(1, 0));
-            
-            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 8, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(3), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true);
-
-
-
-            camera = new Camera2D();
-            this.viewport = viewport;
-        }
+        
 
         public void Update(GameTime gameTime)
         {
@@ -173,6 +118,9 @@ namespace Incendia
             {
                 manager.SetTransitionState(new MenuState(manager, viewport));
             }
+
+            if (camera.Shake > 0)
+                camera.Shake--;
 
             TakeInput();
             FireSimulation.Step(Grid);
@@ -197,7 +145,8 @@ namespace Incendia
             {
                 for (int y = 0; y < WorldLimits.Y; y++)
                 {
-
+                    if (Grid[x, y].ReadyToExplode)
+                        EXPLODE(x,y, gameTime);
                     if (Grid[x,y].State == FireState.Burning && camera.IsInView(new Rectangle((int)(x * Global.PixelsPerTile), (int)(y * Global.PixelsPerTile), (int)Global.PixelsPerTile, (int)Global.PixelsPerTile), viewport))
                     {
                         fire.EmitterLocations.Add(new Vector2((float)x + .5f, (float) y + .5f) * Global.PixelsPerTile);
@@ -207,6 +156,7 @@ namespace Incendia
 
             fireHose.Update(gameTime, this, shootingWater && !TileIsSolid((int)Math.Floor(fireHose.EmitterLocations[0].X / Global.PixelsPerTile), (int)Math.Floor(fireHose.EmitterLocations[0].Y / Global.PixelsPerTile)));
             fire.Update(gameTime, this, true);
+            UpdateExplosions(gameTime);
            
             foreach (Particle p in fireHose.ParticleReturner)
             {
@@ -236,6 +186,7 @@ namespace Incendia
 
             fireHose.Draw(batch);
             fire.Draw(batch);
+            explosions.Draw(batch);
             _player.Draw(batch);
 
 
@@ -253,7 +204,6 @@ namespace Incendia
             batch.End();
 
             batch.Begin();
-            //batch.DrawString(Global.Font, _player.Hp.ToString(), new Vector2(50, 50), Color.Bisque);
             batch.Draw(Global.Textures["HpBarOutline"], new Vector2(50,50), null, Color.White, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
             for (int hp = 0; hp <= _player.Hp; hp++)
             {
@@ -333,6 +283,20 @@ namespace Incendia
             }
         }
 
+        void UpdateExplosions(GameTime time)
+        {
+            for (int i = 0; i <= explosionTime.Count - 1; i++)
+            {
+                if (explosionTime[i] + 1 < time.TotalGameTime.TotalSeconds)
+                {
+                    explosions.EmitterLocations.RemoveAt(explosions.EmitterLocations.Count - 1);
+                    explosionTime.RemoveAt(i);
+                    continue;
+                }
+            }
+            explosions.Update(time, this, true);
+        }
+
         public bool TileIsSolid(int x, int y)
         {
             x = (int)MathHelper.Clamp(x, 0, WorldLimits.X - 1);
@@ -399,6 +363,14 @@ namespace Incendia
         public int IntFromCell(int x, int y)
         {
             return y * Grid.GetLength(0) + x;
+        }
+
+        void EXPLODE(float x, float y, GameTime time)
+        {
+            explosions.EmitterLocations.Add(new Vector2(x + .5f,y + .5f) * Global.PixelsPerTile);
+            explosionTime.Add((float)time.TotalGameTime.TotalSeconds);
+            Grid[(int)x, (int)y].EXPLODES = false;
+            camera.Shake = 50;
         }
     }
 }

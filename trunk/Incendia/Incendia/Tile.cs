@@ -12,6 +12,7 @@ namespace Incendia
         public FireState State { get; set; }
         public string _texture;
         public bool _solid;
+        public bool EXPLODES;
         public bool Solid { get { return _solid && State != FireState.Burnt; } }
         public bool Outside {get; set;}
         public string Texture
@@ -25,13 +26,14 @@ namespace Incendia
             }
         }
 
-        public Tile(float flammability, int material, FireState state, string texture, bool solid, bool outside)
+        public Tile(float flammability, int material, FireState state, string texture, bool solid, bool outside, bool explodes)
         {
             Flammability = flammability;
             Material = material;
             State = state;
             _texture = texture;
             _solid = solid;
+            EXPLODES = explodes;
         }
 
         public void UpdateBurning(int material, FireState state)
@@ -54,6 +56,11 @@ namespace Incendia
             Flammability /= 1.001f;
             return false;
 
+        }
+
+        public bool ReadyToExplode
+        {
+            get { return EXPLODES && Material <= 0; }          
         }
     }
 }

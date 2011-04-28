@@ -23,6 +23,8 @@ namespace Incendia
         private Rectangle _cachedBoundingBox;
         private bool _isMovingUsingScreenAxes;
 
+        public int Shake { get; set; }
+
         public Camera2D()
             : this(Vector2.Zero, 0.0f, 1.0f, true)
         { }
@@ -37,7 +39,7 @@ namespace Incendia
 
         public Vector2 Location
         {
-            get { return _location; }
+            get { return _location + new Vector2(Global.rand.Next(-Shake, Shake), Global.rand.Next(-Shake, Shake)); }
             set
             {
                 _location = value;

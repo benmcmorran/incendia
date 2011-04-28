@@ -44,13 +44,16 @@ namespace Incendia
         private Random random = new Random();
         private float emissionError;
 
+        float DamageRatio;
+
+
         public ParticleSystem(Texture2D texture,
             Vector2 emitterLocation, float minDirection, float maxDirection,
             float minLifetime, float maxLifetime, float emissionRate,
             Curve speed, float speedDeviation,
             Curve rotation, float rotationDeviation,
             Curve scale, float scaleDeviation,
-            Curve colorR, Curve colorG, Curve colorB, Curve colorA, bool hurts)
+            Curve colorR, Curve colorG, Curve colorB, Curve colorA, bool hurts, float damageRatio)
         {
             Manipulators = new List<IParticleManipulator>();
 
@@ -65,6 +68,8 @@ namespace Incendia
             MinLifetime = minLifetime;
             MaxLifetime = maxLifetime;
             EmissionRate = emissionRate;
+
+            DamageRatio = damageRatio;
 
             Speed = speed;
             SpeedDeviation = speedDeviation;
@@ -87,7 +92,7 @@ namespace Incendia
             Curve speed, float speedDeviation,
             Curve rotation, float rotationDeviation,
             Curve scale, float scaleDeviation,
-            Curve colorR, Curve colorG, Curve colorB, Curve colorA, bool hurts)
+            Curve colorR, Curve colorG, Curve colorB, Curve colorA, bool hurts, float damageRatio)
         {
             Manipulators = new List<IParticleManipulator>();
 
@@ -107,6 +112,8 @@ namespace Incendia
 
             Rotation = rotation;
             RotationDeviation = rotationDeviation;
+
+            DamageRatio = damageRatio;
 
             Scale = scale;
             ScaleDeviation = scaleDeviation;
@@ -177,7 +184,7 @@ namespace Incendia
                 Utils.Vector2FromSpeedAndDirection(Speed.Evaluate(0) * speedMultiplier, random.NextFloat(MinDirection, MaxDirection)),
                 speedMultiplier, Rotation.Evaluate(0) * rotationMultiplier, rotationMultiplier,
                 new Color(ColorR.Evaluate(0), ColorG.Evaluate(0), ColorB.Evaluate(0), ColorA.Evaluate(0)),
-                Scale.Evaluate(0), scaleMultiplier, random.NextFloat(MinLifetime, MaxLifetime), HurtsPlayer);
+                Scale.Evaluate(0), scaleMultiplier, random.NextFloat(MinLifetime, MaxLifetime), HurtsPlayer, DamageRatio);
         }
     }
 }
