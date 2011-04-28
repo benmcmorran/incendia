@@ -29,6 +29,8 @@ namespace Incendia
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = 640;
             graphics.PreferredBackBufferHeight = 480;
+            Global.screenWidth = graphics.PreferredBackBufferWidth;
+            Global.screenHeight = graphics.PreferredBackBufferHeight;
         }
 
         /// <summary>
@@ -75,7 +77,13 @@ namespace Incendia
             Global.Textures.Add("HpBit", Content.Load<Texture2D>(@"Images\HpBit"));
             Global.Textures.Add("HpBitFlash", Content.Load<Texture2D>(@"Images\HpBitFlash"));
             Global.Textures.Add("Gas Can", Content.Load<Texture2D>(@"Images\GasCan"));
-            Global.Textures.Add("Gas Canb", Content.Load<Texture2D>(@"Images\GasCanb")); 
+            Global.Textures.Add("Gas Canb", Content.Load<Texture2D>(@"Images\GasCanb"));
+
+            Global.Textures.Add("BlackBlock", Content.Load<Texture2D>(@"Images\BlackBlock"));
+            Global.Textures.Add("RedBlock", Content.Load<Texture2D>(@"Images\RedBlock"));
+            Global.Textures.Add("WhiteBlock", Content.Load<Texture2D>(@"Images\WhiteBlock"));
+            Global.Textures.Add("GreyBlock", Content.Load<Texture2D>(@"Images\GreyBlock"));
+            Global.Textures.Add("GreenBlock", Content.Load<Texture2D>(@"Images\GreenBlock")); 
 
 
 

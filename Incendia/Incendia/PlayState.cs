@@ -27,6 +27,7 @@ namespace Incendia
         StateManager manager;
         public double hpBarFlashing = 0;
         List<float> explosionTime = new List<float>();
+        bool _showMiniMap;
 
         public PlayState(StateManager manager, string name, Viewport viewport)
         {
@@ -106,6 +107,7 @@ namespace Incendia
             fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true, 1);
             explosions = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, 1f, 2f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true, 10);
 
+            _showMiniMap = true;
             camera = new Camera2D();
             this.viewport = viewport;
         }
@@ -212,6 +214,8 @@ namespace Incendia
                 else
                     batch.Draw(Global.Textures["HpBit"], new Vector2(53 + hp, 53), null, Color.White, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
             }
+            if(_showMiniMap)
+                DrawMiniMap(batch);
             batch.End();
 
 
@@ -243,6 +247,8 @@ namespace Incendia
             
             if(Input.KeyJustPressed(Keys.Space))
                 ItterateNozzle();
+            if (Input.KeyJustPressed(Keys.M))
+                _showMiniMap = !_showMiniMap;
 
             if (Input.KeyJustPressed(Keys.Escape))
                 manager.SetTransitionState(new MenuState(manager, viewport));
@@ -363,6 +369,43 @@ namespace Incendia
         public int IntFromCell(int x, int y)
         {
             return y * Grid.GetLength(0) + x;
+        }
+
+        void DrawMiniMap(SpriteBatch batch)
+        {
+            Vector2 startingCorner = new Vector2(Global.screenWidth - 50, Global.screenHeight - 50);
+            int blockSize = 5;
+
+            for (int x = (int)WorldLimits.X - 1; x >= 0; x--)
+            {
+                for (int y = (int)WorldLimits.Y - 1; y >= 0; y--)
+                {
+                    Vector2 location = startingCorner - new Vector2(WorldLimits.X - 1 - x, WorldLimits.Y - 1 - y) * blockSize;
+                    switch (Grid[x, y].State)
+                    {
+                        case(FireState.Burning):
+                            if (Grid[x, y].Solid)
+                                batch.Draw(Global.Textures["BlackBlock"], location, null, Color.White, 0, Vector2.Zero, new Vector2(1, 1) * blockSize / Global.Textures["BlackBlock"].Width, SpriteEffects.None, 0);
+                            else
+                                batch.Draw(Global.Textures["RedBlock"], location, null, Color.White, 0, Vector2.Zero, new Vector2(1, 1) * blockSize / Global.Textures["RedBlock"].Width, SpriteEffects.None, 0);
+                            break;
+                        case(FireState.Burnt):
+                            batch.Draw(Global.Textures["GreyBlock"], location, null, Color.White, 0, Vector2.Zero, new Vector2(1, 1) * blockSize / Global.Textures["GreyBlock"].Width, SpriteEffects.None, 0);
+                            break;
+                        default:
+                            if(Grid[x,y].Solid)
+                                batch.Draw(Global.Textures["BlackBlock"], location, null, Color.White, 0, Vector2.Zero, new Vector2(1, 1) * blockSize / Global.Textures["BlackBlock"].Width, SpriteEffects.None, 0);
+                            else
+                                batch.Draw(Global.Textures["WhiteBlock"], location, null, Color.White, 0, Vector2.Zero, new Vector2(1, 1) * blockSize / Global.Textures["WhiteBlock"].Width, SpriteEffects.None, 0);
+                            break;
+
+                    }
+
+                }
+            }
+
+            batch.Draw(Global.Textures["GreenBlock"], startingCorner - new Vector2(WorldLimits.X - 1 - _player.Position.X, WorldLimits.Y - 1 - _player.Position.Y) * blockSize, null, Color.White, 0, Vector2.Zero, new Vector2(1, 1) * blockSize / Global.Textures["GreenBlock"].Width, SpriteEffects.None, 0);
+
         }
 
         void EXPLODE(float x, float y, GameTime time)
