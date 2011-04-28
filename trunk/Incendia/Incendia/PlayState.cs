@@ -370,7 +370,7 @@ namespace Incendia
             explosions.EmitterLocations.Add(new Vector2(x + .5f,y + .5f) * Global.PixelsPerTile);
             explosionTime.Add((float)time.TotalGameTime.TotalSeconds);
             Grid[(int)x, (int)y].EXPLODES = false;
-            camera.Shake = 50;
+            camera.Shake = 70;
         }
     }
 }
