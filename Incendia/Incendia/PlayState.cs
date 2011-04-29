@@ -103,16 +103,19 @@ namespace Incendia
             a.Keys.Add(new CurveKey(.3f, 1));
             a.Keys.Add(new CurveKey(.7f, 1));
             a.Keys.Add(new CurveKey(1, 0));
-            fireHose = new ParticleSystem(Global.Textures["Water"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, false, 1);
+            fireHose = new ParticleSystem(Global.Textures["Water"], _player.PositionCenter, 0, 0, .5f, .7f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, c, .05f, a, a, a, a, false, 1);
 
             a = new Curve();
             a.Keys.Add(new CurveKey(0, 0));
             a.Keys.Add(new CurveKey(.3f, .5f));
             a.Keys.Add(new CurveKey(.7f, .5f));
             a.Keys.Add(new CurveKey(1, 0));
-
-            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true, 1);
-            explosions = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, 1f, 2f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, Utils.ConstantCurve(1), Utils.ConstantCurve(1), Utils.ConstantCurve(1), a, true, 10);
+            Curve preMultColor = new Curve();
+            preMultColor.Keys.Add(new CurveKey(0, 1));
+            preMultColor.Keys.Add(new CurveKey(.7f, 1));
+            preMultColor.Keys.Add(new CurveKey(1, 0));
+            fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, preMultColor, preMultColor, preMultColor, a, true, 1);
+            explosions = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, 1f, 2f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, preMultColor, preMultColor, preMultColor, a, true, 10);
 
             _showMiniMap = true;
             camera = new Camera2D();
