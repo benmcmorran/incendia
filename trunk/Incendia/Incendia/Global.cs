@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 
 namespace Incendia
@@ -14,6 +15,7 @@ namespace Incendia
     class Global
     {
         public static Dictionary<string, Texture2D> Textures;
+        public static Dictionary<string, SoundEffect> Sounds;
         static public Random rand = new Random();
         public static int screenWidth, screenHeight;
         public static SpriteFont Font;
