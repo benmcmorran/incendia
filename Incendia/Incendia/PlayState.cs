@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Incendia
 {
@@ -27,6 +28,8 @@ namespace Incendia
         public double hpBarFlashing = 0;
         List<float> explosionTime = new List<float>();
         bool _showMiniMap;
+        SoundEffectInstance hoseSound = Global.Sounds["Hose"].CreateInstance();
+        SoundEffectInstance fireSound = Global.Sounds["Fire"].CreateInstance();
 
         public PlayState(StateManager manager, string name, Viewport viewport)
         {
@@ -117,6 +120,11 @@ namespace Incendia
             fire = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, .5f, 1f, 10, Utils.ConstantCurve(100), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, preMultColor, preMultColor, preMultColor, a, true, 1);
             explosions = new ParticleSystem(Global.Textures["Fire"], new List<Vector2>(), 0, (float)Math.PI * 2, 1f, 2f, 500, Utils.ConstantCurve(500), .10f, Utils.ConstantCurve(0), 0, Utils.ConstantCurve(1), .05f, preMultColor, preMultColor, preMultColor, a, true, 10);
 
+            hoseSound.IsLooped = true;
+            fireSound.IsLooped = true;
+            fireSound.Play();
+            PlayVictimCount();
+
             _showMiniMap = true;
             camera = new Camera2D();
             this.viewport = viewport;
@@ -163,6 +171,11 @@ namespace Incendia
                     }
                 }
             }
+
+            if (shootingWater)
+                hoseSound.Play();
+            else
+                hoseSound.Pause();
 
             fireHose.Update(gameTime, this, shootingWater && !TileIsSolid((int)Math.Floor(fireHose.EmitterLocations[0].X / Global.PixelsPerTile), (int)Math.Floor(fireHose.EmitterLocations[0].Y / Global.PixelsPerTile)));
             fire.Update(gameTime, this, true);
@@ -287,16 +300,25 @@ namespace Incendia
                     }
                 }
 
-                
+
+                bool victimsRescued = false;
                 if (Victims[i].Rescued)
                 {
                     Victims.RemoveAt(i);
+                    victimsRescued = true;
                     continue;
                 }
+                if (victimsRescued)
+                    PlayVictimCount();
 
                 Victims[i].Update(gameTime, this);
                 Victims[i].Behave(this);
             }
+        }
+
+        private void PlayVictimCount()
+        {
+            Global.Sounds[Victims.Count + " Left"].Play();
         }
 
         void UpdateExplosions(GameTime time)

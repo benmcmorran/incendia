@@ -125,6 +125,16 @@ namespace Incendia
 
             Global.Textures.Add("Fade", Content.Load<Texture2D>(@"Images\Fade"));
 
+            Global.Sounds = new Dictionary<string, SoundEffect>();
+            Global.Sounds.Add("Fire", Content.Load<SoundEffect>(@"Sound\FIRE!"));
+            Global.Sounds.Add("Hose", Content.Load<SoundEffect>(@"Sound\hose"));
+            Global.Sounds.Add("5 Left", Content.Load<SoundEffect>(@"Sound\Chief\5left"));
+            Global.Sounds.Add("4 Left", Content.Load<SoundEffect>(@"Sound\Chief\4left"));
+            Global.Sounds.Add("3 Left", Content.Load<SoundEffect>(@"Sound\Chief\3left"));
+            Global.Sounds.Add("2 Left", Content.Load<SoundEffect>(@"Sound\Chief\2left"));
+            Global.Sounds.Add("1 Left", Content.Load<SoundEffect>(@"Sound\Chief\1left"));
+            Global.Sounds.Add("0 Left", Content.Load<SoundEffect>(@"Sound\Chief\0left"));
+
             Global.Font = Content.Load<SpriteFont>(@"SpriteFont1");
 
             stateManager = new StateManager();
