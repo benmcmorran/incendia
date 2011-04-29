@@ -131,6 +131,7 @@ namespace Incendia
                     SetMaterial(0);
                     SetFlammability(0);
                     SetSolidity(false);
+                    Outside = true;
                     break;
             }
         }
@@ -195,9 +196,10 @@ namespace Incendia
                     break;
                 case Layer2TileType.Flammables:
                     _texture2 = "Flammables";
-                    SetMaterial(Global.rand.Next(100, 200));
+                    Material = 100;   // Gas cans need to blow up fast, so override the material
                     SetFlammability(1);
                     SetSolidity(false);
+                    EXPLODES = true;
                     break;
                 case Layer2TileType.Empty:
                     _texture2 = "Empty";
