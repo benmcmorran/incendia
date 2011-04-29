@@ -18,6 +18,7 @@ namespace Incendia
         public static Dictionary<string, SoundEffect> Sounds;
         static public Random rand = new Random();
         public static int screenWidth, screenHeight;
+        public static float SmokeSpread = .005f;
         public static SpriteFont Font;
         public static  float PixelsPerTile = 50;
     }

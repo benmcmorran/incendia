@@ -32,6 +32,22 @@ namespace Incendia
         /// </summary>
         Burnt
     }
+
+    /// <summary>
+    /// Represents the possible smoke states in a FireSimulation.
+    /// </summary>
+    public enum SmokeState
+    {
+        /// <summary>
+        /// A cell that contains smoke.
+        /// </summary>
+        WithSmoke,
+
+        /// <summary>
+        /// A cell that does not contain smoke.
+        /// </summary>
+        WithoutSmoke
+    }
     
     /// <summary>
     /// Simulates the spread of a fire based on a cellular automata model.
@@ -45,14 +61,18 @@ namespace Incendia
         {
             int width = map.GetLength(0);
             int height = map.GetLength(1);
+            int[,] material = new int[width, height];
+            FireState[,] state = new FireState[width, height];
+            SmokeState[,] smoke = new SmokeState[width, height];
             
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
                     // Set new material and state equal to present by default (nothing happens)
-                    int material = map[x, y].Material;
-                    FireState state = map[x, y].State;
+                    material[x, y] = map[x, y].Material;
+                    state[x, y] = map[x, y].State;
+                    smoke[x, y] = map[x, y].Smoke;
 
                     switch (map[x, y].State)
                     {
@@ -61,32 +81,53 @@ namespace Incendia
 
                         case FireState.Unburned:
                             // If so, this cell may start burning based on its flammability
-                            if (HasBurningNeighbor(x, y, map) && Global.rand.NextDouble() < map[x, y].Flammability)
-                                state = FireState.Burning;
+                            if (HasNeighbor(x, y, map, t => t.State == FireState.Burning)
+                                && Global.rand.NextDouble() < map[x, y].Flammability)
+                                state[x, y] = FireState.Burning;
                             break;
 
                         case FireState.Burning:
-                            material--;
-                            if (material <= 0)
-                                state = FireState.Burnt;
+                            material[x, y]--;
+                            if (material[x, y] <= 0)
+                                state[x, y] = FireState.Burnt;
                             break;
 
                         case FireState.Burnt:
                             break;
                     }
 
-                    map[x, y].UpdateBurning(material, state);
+                    switch (map[x, y].Smoke)
+                    {
+                        case SmokeState.WithSmoke:
+                            break;
+
+                        case SmokeState.WithoutSmoke:
+                            if (((HasNeighbor(x, y, map, t => t.Smoke == SmokeState.WithSmoke)
+                                  && Global.rand.NextDouble() < Global.SmokeSpread)
+                                 || state[x, y] == FireState.Burning)
+                                && !map[x, y].Solid)
+                                smoke[x, y] = SmokeState.WithSmoke;
+                            break;
+                    }
+                }
+            }
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    map[x, y].UpdateBurning(material[x, y], state[x, y], smoke[x, y]);
                 }
             }
         }
 
-        private static bool HasBurningNeighbor(int x, int y, Tile[,] map)
+        private static bool HasNeighbor(int x, int y, Tile[,] map, Predicate<Tile> predicate)
         {
             for (int offsetX = -1; offsetX <= 1; offsetX++)
                 for (int offsetY = -1; offsetY <= 1; offsetY++)
                 {
                     if (IsValidCell(x + offsetX, y + offsetY, map)
-                        && map[x + offsetX, y + offsetY].State == FireState.Burning)
+                        && predicate(map[x + offsetX, y + offsetY]))
                         return true;
                 }
 
