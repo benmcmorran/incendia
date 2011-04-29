@@ -46,6 +46,7 @@ namespace Incendia
         public float Flammability { get; private set; }
         public int Material { get; private set; }
         public FireState State { get; set; }
+        public SmokeState Smoke { get; set; }
         public string _texture1;
         public string _texture2;
         public string _texture3;
@@ -74,6 +75,7 @@ namespace Incendia
             Flammability = 0;
             Material = 0;
             State = FireState.Unburned;
+            Smoke = SmokeState.WithoutSmoke;
 
             SetLayer1(layer1);
             SetLayer2(layer2);
@@ -144,19 +146,19 @@ namespace Incendia
                     _texture2 = "Desk";
                     SetMaterial(Global.rand.Next(5000, 6000));
                     SetFlammability(.003f);
-                    SetSolidity(false);
+                    SetSolidity(true);
                     break;
                 case Layer2TileType.Sofa:
                     _texture2 = "Couch";
                     SetMaterial(Global.rand.Next(4000, 5000));
                     SetFlammability(.1f);
-                    SetSolidity(false);
+                    SetSolidity(true);
                     break;
                 case Layer2TileType.Plant:
                     _texture2 = "Plant";
                     SetMaterial(Global.rand.Next(1000, 2000));
                     SetFlammability(.0001f);
-                    SetSolidity(false);
+                    SetSolidity(true);
                     break;
                 case Layer2TileType.OpenHorizontalDoor:
                     _texture2 = "Open Horizontal Door";
@@ -268,10 +270,11 @@ namespace Incendia
             return State == FireState.Burnt ? "b" : String.Empty;
         }
 
-        public void UpdateBurning(int material, FireState state)
+        public void UpdateBurning(int material, FireState state, SmokeState smoke)
         {
             Material = material;
             State = state;
+            Smoke = smoke;
         }
 
         /// <summary>

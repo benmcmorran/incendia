@@ -201,9 +201,11 @@ namespace Incendia
                     
                     if (camera.IsInView(new Rectangle((int)(x * Global.PixelsPerTile), (int)(y * Global.PixelsPerTile), (int)Global.PixelsPerTile, (int)Global.PixelsPerTile), viewport))
                     {
-                            batch.Draw(Global.Textures[Grid[x, y].Texture1], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[Grid[x, y].Texture1].Width, SpriteEffects.None, 0);
-                            batch.Draw(Global.Textures[Grid[x, y].Texture2], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[Grid[x, y].Texture2].Width, SpriteEffects.None, 0);
-                            batch.Draw(Global.Textures[Grid[x, y].Texture3], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[Grid[x, y].Texture3].Width, SpriteEffects.None, 0);
+                        batch.Draw(Global.Textures[Grid[x, y].Texture1], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[Grid[x, y].Texture1].Width, SpriteEffects.None, 0);
+                        batch.Draw(Global.Textures[Grid[x, y].Texture2], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[Grid[x, y].Texture2].Width, SpriteEffects.None, 0);
+                        batch.Draw(Global.Textures[Grid[x, y].Texture3], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[Grid[x, y].Texture3].Width, SpriteEffects.None, 0);
+                        if (Grid[x, y].Smoke == SmokeState.WithSmoke)
+                            batch.Draw(Global.Textures["Smoke"], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures["Smoke"].Width, SpriteEffects.None, 0);
                     }
                 }
             }
