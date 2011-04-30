@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("Incendia")]
 [assembly: AssemblyProduct("Incendia")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyDescription("Firefighting Game for OGPC 4.0")]
+[assembly: AssemblyCompany("PHRED TO.0")]
+[assembly: AssemblyCopyright("Copyright © PHRED TO.0 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
