@@ -136,6 +136,7 @@ namespace Incendia
 
             hoseSound.IsLooped = true;
             fireSound.IsLooped = true;
+            fireSound.Volume = .5f;
             fireSound.Play();
             PlayVictimCount();
 
@@ -212,7 +213,6 @@ namespace Incendia
             {
                 for (int y = 0; y < WorldLimits.Y; y++)
                 {
-                    
                     if (camera.IsInView(new Rectangle((int)(x * Global.PixelsPerTile), (int)(y * Global.PixelsPerTile), (int)Global.PixelsPerTile, (int)Global.PixelsPerTile), viewport))
                     {
                         batch.Draw(Global.Textures[Grid[x, y].Texture1], new Vector2(x, y) * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, Global.PixelsPerTile / Global.Textures[Grid[x, y].Texture1].Width, SpriteEffects.None, 0);

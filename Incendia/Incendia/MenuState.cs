@@ -23,7 +23,7 @@ namespace Incendia
             this.manager = manager;
             this.viewport = viewport;
 
-            levels = Directory.GetFiles(Environment.CurrentDirectory + "\\Levels", "*.txt");
+            levels = Directory.GetFiles(Environment.CurrentDirectory + "\\Levels", "*.txt", SearchOption.TopDirectoryOnly);
             for (int i = 0; i < levels.Length; i++)
                 levels[i] = Path.GetFileNameWithoutExtension(levels[i]);
             currentLevel = 0;
@@ -38,6 +38,9 @@ namespace Incendia
 
                 if (Input.KeyJustPressed(Keys.Up))
                     currentLevel = currentLevel - 1 < 0 ? levels.Length - 1 : currentLevel - 1;
+
+                if (Input.KeyJustReleased(Keys.Escape))
+                    Environment.Exit(0);
             }
             else
             {
