@@ -227,7 +227,7 @@ namespace Incendia
             {
                 r = new Rectanglef(c.Position.X * Global.PixelsPerTile, c.Position.Y * Global.PixelsPerTile, c.Visual.Width * Global.PixelsPerTile, c.Visual.Height * Global.PixelsPerTile);
                 if (HurtsPlayer && TopLeftCorner.X + Texture.Width >= r.X && TopLeftCorner.X <= r.X + r.Width && TopLeftCorner.Y + Texture.Height >= r.Y && TopLeftCorner.Y <= r.Y + r.Height)
-                    map._player.Hp -= .02f * DamageRatio;
+                    c.Hp -= .02f * DamageRatio;
             }
         }
 

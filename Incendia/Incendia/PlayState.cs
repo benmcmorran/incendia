@@ -14,6 +14,7 @@ namespace Incendia
     public class PlayState : IGraph<int>, IGameState
     {
         public Character _player;
+        bool cheating = false;
         public Vector2 WorldLimits { get; set; }
         public Tile[,] Grid { get; private set; }
         Camera2D camera;
@@ -47,6 +48,17 @@ namespace Incendia
             Grid = new Tile[Convert.ToInt32(size[0].Trim()), Convert.ToInt32(size[1].Trim())];
             selectedNozzle = Nozzle.narrow;
 
+            string[] victimPositions = lines[2].Split(new char[] { ';' });
+            foreach (string victimPosition in victimPositions)
+            {
+                string[] position = victimPosition.Split(new char[] { ',' });
+                Victims.Add(Generator.VictimSprite(new Vector2(Convert.ToInt32(position[0].Trim()), Convert.ToInt32(position[1].Trim()))));
+            }
+
+            string[] firePositionList = lines[3].Split(new char[] { ',' });
+            Vector2 firePosition = new Vector2(Convert.ToInt32(firePositionList[0].Trim()), Convert.ToInt32(firePositionList[1].Trim()));
+
+
             for (int x = 0; x < Grid.GetLength(0); x++)
             {
                 for (int y = 0; y < Grid.GetLength(1); y++)
@@ -55,7 +67,7 @@ namespace Incendia
                     Layer2TileType layer2 = Layer2TileType.Empty;
                     Layer3TileType layer3 = Layer3TileType.Empty;
 
-                    switch (lines[y + 2][x])
+                    switch (lines[y + 4][x])
                     {
                         case 'O': layer1 = Layer1TileType.Outside; break;
                         case '1': layer1 = Layer1TileType.Carpet1; break;
@@ -67,7 +79,7 @@ namespace Incendia
                         case 'W': layer1 = Layer1TileType.WoodWall; break;
                     }
 
-                    switch (lines[y + Grid.GetLength(1) + 3][x])
+                    switch (lines[y + Grid.GetLength(1) + 5][x])
                     {
                         case '-': layer2 = Layer2TileType.Empty; break;
                         case 'E': layer2 = Layer2TileType.Desk; break;
@@ -75,12 +87,14 @@ namespace Incendia
                         case 'P': layer2 = Layer2TileType.Plant; break;
                         case 'C': layer2 = Layer2TileType.OpenVerticalDoor; break;
                         case 'D': layer2 = Layer2TileType.ClosedVerticalDoor; break;
+                        case 'c': layer2 = Layer2TileType.OpenHorizontalDoor; break;
+                        case 'd': layer2 = Layer2TileType.ClosedHorizontalDoor; break;
                         case 'T': layer2 = Layer2TileType.TrashCan; break;
                         case 'N': layer2 = Layer2TileType.Newspaper; break;
                         case 'F': layer2 = Layer2TileType.Flammables; break;
                     }
 
-                    switch (lines[y + 2 * Grid.GetLength(1) + 4][x])
+                    switch (lines[y + 2 * Grid.GetLength(1) + 6][x])
                     {
                         case 'C': layer3 = Layer3TileType.Computer; break;
                         case 'B': layer3 = Layer3TileType.Blotter; break;
@@ -93,7 +107,7 @@ namespace Incendia
                 }
             }
 
-            Victims.Add(Generator.VictimSprite(new Vector2(4, 14)));
+            Grid[(int)firePosition.X, (int)firePosition.Y].State = FireState.Burning;
 
             Curve c = new Curve();
             c.Keys.Add(new CurveKey(0, 0));
@@ -132,7 +146,7 @@ namespace Incendia
 
         public void Update(GameTime gameTime)
         {
-            if (_player.Hp <= 0 && ! manager.isTransitioning)
+            if (_player.Hp <= 0 && !manager.isTransitioning && !cheating)
             {
                 manager.SetTransitionState(new MenuState(manager, viewport));
             }
@@ -222,8 +236,6 @@ namespace Incendia
                 c.Draw(batch);
             }
 
-            
-
             //batch.Draw(Global.Textures["Wall"], _player.PositionCenter * Global.PixelsPerTile, null, Color.White, 0, Vector2.Zero, new Vector2(1,1), SpriteEffects.None, 0);
             _player.Draw(batch);
 
@@ -267,13 +279,14 @@ namespace Incendia
             _player.SetVelocityX(_player.Velocity.X * 1.5f);
             _player.SetVelocityY(_player.Velocity.Y * 1.5f);
 
-
             shootingWater = Input.MouseLeftClicked();
             
             if(Input.KeyJustPressed(Keys.Space))
                 ItterateNozzle();
             if (Input.KeyJustPressed(Keys.M))
                 _showMiniMap = !_showMiniMap;
+            if (Input.KeyJustPressed(Keys.I))
+                cheating = !cheating;
 
             if (Input.KeyJustPressed(Keys.Escape))
                 manager.SetTransitionState(new MenuState(manager, viewport));
@@ -281,11 +294,14 @@ namespace Incendia
 
         void UpdateVictims(GameTime gameTime)
         {
+            bool victimsRescued = false;
             for (int i = Victims.Count - 1; i >= 0; i--)
             {
                 if (Victims[i].Hp <= 0)
                 {
                     Victims.RemoveAt(i);
+                    if (!manager.isTransitioning)
+                        manager.SetTransitionState(new MessageState(manager, new MenuState(manager, viewport), "Empty", "You Lost!"));
                     continue;
                 }
 
@@ -296,26 +312,42 @@ namespace Incendia
                         if (Grid[x, y].Outside)
                         {
                             Victims[i].Escaped = true;
+                            Victims[i].Rescued = true;
                             x = 9999;
                             break;
                         }
                     }
                 }
 
-
-                bool victimsRescued = false;
                 if (Victims[i].Rescued)
                 {
                     Victims.RemoveAt(i);
                     victimsRescued = true;
                     continue;
                 }
-                if (victimsRescued)
-                    PlayVictimCount();
 
                 Victims[i].Update(gameTime, this);
                 Victims[i].Behave(this);
             }
+
+            if (victimsRescued)
+                PlayVictimCount();
+            if (!manager.isTransitioning && Victims.Count == 0)
+                manager.SetTransitionState(new MessageState(manager, new MenuState(manager, viewport), "Empty", "You Won...\nwith a score of " + CalculateScore() + "."));
+
+        }
+
+        private int CalculateScore()
+        {
+            int cellCount = Grid.GetLength(0) * Grid.GetLength(1);
+            int unburnedCells = 0;
+
+            for (int x = 0; x < Grid.GetLength(0); x++)
+                for (int y = 0; y < Grid.GetLength(1); y++)
+                    if (Grid[x, y].State == FireState.Unburned)
+                        unburnedCells++;
+
+            return (int)((float)unburnedCells / cellCount * 10000);
         }
 
         private void PlayVictimCount()
@@ -448,6 +480,7 @@ namespace Incendia
             explosionTime.Add((float)time.TotalGameTime.TotalSeconds);
             Grid[(int)x, (int)y].EXPLODES = false;
             camera.Shake = 70;
+            Global.Sounds["Boom"].Play();
         }
     }
 }

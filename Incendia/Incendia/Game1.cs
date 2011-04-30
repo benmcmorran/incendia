@@ -31,6 +31,7 @@ namespace Incendia
             graphics.PreferredBackBufferHeight = 480;
             Global.screenWidth = graphics.PreferredBackBufferWidth;
             Global.screenHeight = graphics.PreferredBackBufferHeight;
+            //graphics.IsFullScreen = true;
         }
 
         /// <summary>
@@ -55,10 +56,12 @@ namespace Incendia
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Global.Textures = new Dictionary<string, Texture2D>();
-            Global.Textures.Add("Player", Content.Load<Texture2D>(@"Images\Guy"));
+            Global.Textures.Add("Player", Content.Load<Texture2D>(@"Images\Fireman1"));
             Global.Textures.Add("Empty", Content.Load<Texture2D>(@"Images\Empty"));
             Global.Textures.Add("Emptyb", Content.Load<Texture2D>(@"Images\Empty"));
 
+            Global.Textures.Add("Outside", Content.Load<Texture2D>(@"Images\Grass"));
+            Global.Textures.Add("Outsideb", Content.Load<Texture2D>(@"Images\Grass"));
             Global.Textures.Add("Carpet 1", Content.Load<Texture2D>(@"Images\Carpet")); //This image MUST be square
             Global.Textures.Add("Carpet 1b", Content.Load<Texture2D>(@"Images\Carpetb")); //This image MUST be square
             Global.Textures.Add("Carpet 2", Content.Load<Texture2D>(@"Images\Carpet2")); //This image MUST be square
@@ -74,20 +77,20 @@ namespace Incendia
             Global.Textures.Add("Wooden Wall", Content.Load<Texture2D>(@"Images\woodwall")); //This image MUST be square
             Global.Textures.Add("Wooden Wallb", Content.Load<Texture2D>(@"Images\woodwallb")); //This image MUST be square
 
-            Global.Textures.Add("Desk", Content.Load<Texture2D>(@"Images\deskcorner")); //This image MUST be square
-            Global.Textures.Add("Deskb", Content.Load<Texture2D>(@"Images\deskcornerb")); //This image MUST be square
+            Global.Textures.Add("Desk", Content.Load<Texture2D>(@"Images\Table")); //This image MUST be square
+            Global.Textures.Add("Deskb", Content.Load<Texture2D>(@"Images\Empty")); //This image MUST be square
             Global.Textures.Add("Couch", Content.Load<Texture2D>(@"Images\Couch")); //This image MUST be square
             Global.Textures.Add("Couchb", Content.Load<Texture2D>(@"Images\Couchb")); //This image MUST be square
             Global.Textures.Add("Plant", Content.Load<Texture2D>(@"Images\Plant")); //This image MUST be square
             Global.Textures.Add("Plantb", Content.Load<Texture2D>(@"Images\Plantburnt")); //This image MUST be square
-            Global.Textures.Add("Open Horizontal Door", Content.Load<Texture2D>(@"Images\dooropen")); //This image MUST be square
-            Global.Textures.Add("Open Horizontal Doorb", Content.Load<Texture2D>(@"Images\doorb")); //This image MUST be square
-            Global.Textures.Add("Open Vertical Door", Content.Load<Texture2D>(@"Images\door")); //This image MUST be square
-            Global.Textures.Add("Open Vertical Doorb", Content.Load<Texture2D>(@"Images\doorb")); //This image MUST be square
-            Global.Textures.Add("Closed Horizontal Door", Content.Load<Texture2D>(@"Images\door")); //This image MUST be square
-            Global.Textures.Add("Closed Horizontal Doorb", Content.Load<Texture2D>(@"Images\doorb")); //This image MUST be square
-            Global.Textures.Add("Closed Vertical Door", Content.Load<Texture2D>(@"Images\dooropen")); //This image MUST be square
-            Global.Textures.Add("Closed Vertical Doorb", Content.Load<Texture2D>(@"Images\doorb")); //This image MUST be square
+            Global.Textures.Add("Open Horizontal Door", Content.Load<Texture2D>(@"Images\dooropentop")); //This image MUST be square
+            Global.Textures.Add("Open Horizontal Doorb", Content.Load<Texture2D>(@"Images\Empty")); //This image MUST be square
+            Global.Textures.Add("Open Vertical Door", Content.Load<Texture2D>(@"Images\dooropenRight")); //This image MUST be square
+            Global.Textures.Add("Open Vertical Doorb", Content.Load<Texture2D>(@"Images\Empty")); //This image MUST be square
+            Global.Textures.Add("Closed Horizontal Door", Content.Load<Texture2D>(@"Images\doortop")); //This image MUST be square
+            Global.Textures.Add("Closed Horizontal Doorb", Content.Load<Texture2D>(@"Images\Empty")); //This image MUST be square
+            Global.Textures.Add("Closed Vertical Door", Content.Load<Texture2D>(@"Images\doorRight")); //This image MUST be square
+            Global.Textures.Add("Closed Vertical Doorb", Content.Load<Texture2D>(@"Images\Empty")); //This image MUST be square
             Global.Textures.Add("Trash Can", Content.Load<Texture2D>(@"Images\trashcan")); //This image MUST be square
             Global.Textures.Add("Trash Canb", Content.Load<Texture2D>(@"Images\trashcanb")); //This image MUST be square
             Global.Textures.Add("Newspaper", Content.Load<Texture2D>(@"Images\newspaper")); //This image MUST be square
@@ -120,9 +123,25 @@ namespace Incendia
 
 
 
-            Global.Textures.Add("Victim1", Content.Load<Texture2D>(@"Images\VictimProxy")); //This image MUST be square
+            Global.Textures.Add("Victim1", Content.Load<Texture2D>(@"Images\People1")); //This image MUST be square
+            Global.Textures.Add("Victim2", Content.Load<Texture2D>(@"Images\People2")); //This image MUST be square
+            Global.Textures.Add("Victim3", Content.Load<Texture2D>(@"Images\People3")); //This image MUST be square
 
             Global.Textures.Add("Fade", Content.Load<Texture2D>(@"Images\Fade"));
+
+            Global.Textures.Add("Splash", Content.Load<Texture2D>(@"Images\UI\Incendia"));
+            Global.Textures.Add("Game Info", Content.Load<Texture2D>(@"Images\UI\Gameinfo"));
+            Global.Textures.Add("Help", Content.Load<Texture2D>(@"Images\UI\Help"));
+            Global.Textures.Add("Button Help", Content.Load<Texture2D>(@"Images\UI\ButtonHelp"));
+            Global.Textures.Add("Button Helpb", Content.Load<Texture2D>(@"Images\UI\ButtonHelpb"));
+            Global.Textures.Add("Button Info", Content.Load<Texture2D>(@"Images\UI\ButtonInfo"));
+            Global.Textures.Add("Button Infob", Content.Load<Texture2D>(@"Images\UI\ButtonInfob"));
+            Global.Textures.Add("Button Levels", Content.Load<Texture2D>(@"Images\UI\ButtonLevels"));
+            Global.Textures.Add("Button Levelsb", Content.Load<Texture2D>(@"Images\UI\ButtonLevelsb"));
+            Global.Textures.Add("Button Play", Content.Load<Texture2D>(@"Images\UI\ButtonPlay"));
+            Global.Textures.Add("Button Playb", Content.Load<Texture2D>(@"Images\UI\ButtonPlayb"));
+            Global.Textures.Add("Button User Levels", Content.Load<Texture2D>(@"Images\UI\ButtonUserLevels"));
+            Global.Textures.Add("Button User Levelsb", Content.Load<Texture2D>(@"Images\UI\ButtonUserLevelsb"));
 
             Global.Sounds = new Dictionary<string, SoundEffect>();
             Global.Sounds.Add("Fire", Content.Load<SoundEffect>(@"Sound\FIRE!"));
@@ -133,6 +152,7 @@ namespace Incendia
             Global.Sounds.Add("2 Left", Content.Load<SoundEffect>(@"Sound\Chief\2left"));
             Global.Sounds.Add("1 Left", Content.Load<SoundEffect>(@"Sound\Chief\1left"));
             Global.Sounds.Add("0 Left", Content.Load<SoundEffect>(@"Sound\Chief\0left"));
+            Global.Sounds.Add("Boom", Content.Load<SoundEffect>(@"Sound\Boom"));
 
             Global.Font = Content.Load<SpriteFont>(@"SpriteFont1");
 
@@ -172,7 +192,7 @@ namespace Incendia
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.White);
+            GraphicsDevice.Clear(Color.Black);
 
             stateManager.Draw(spriteBatch);
 

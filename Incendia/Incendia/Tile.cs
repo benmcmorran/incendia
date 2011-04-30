@@ -51,6 +51,7 @@ namespace Incendia
         public string _texture2;
         public string _texture3;
         public bool _solid;
+        public bool IsDoor;
         public bool EXPLODES;
         public bool Solid { get { return _solid && State != FireState.Burnt; } }
         public bool Outside {get; set;}
@@ -129,7 +130,7 @@ namespace Incendia
                     SetSolidity(true);
                     break;
                 case Layer1TileType.Outside:
-                    _texture1 = "Empty";
+                    _texture1 = "Outside";
                     SetMaterial(0);
                     SetFlammability(0);
                     SetSolidity(false);
@@ -165,24 +166,28 @@ namespace Incendia
                     SetMaterial(Global.rand.Next(2000, 3000));
                     SetFlammability(.0001f);
                     SetSolidity(false);
+                    IsDoor = true;
                     break;
                 case Layer2TileType.OpenVerticalDoor:
                     _texture2 = "Open Vertical Door";
                     SetMaterial(Global.rand.Next(2000, 3000));
                     SetFlammability(.0001f);
                     SetSolidity(false);
+                    IsDoor = true;
                     break;
                 case Layer2TileType.ClosedHorizontalDoor:
                     _texture2 = "Closed Horizontal Door";
                     SetMaterial(Global.rand.Next(2000, 3000));
                     Flammability = .0001f;
                     SetSolidity(true);
+                    IsDoor = true;
                     break;
                 case Layer2TileType.ClosedVerticalDoor:
                     _texture2 = "Closed Vertical Door";
                     SetMaterial(Global.rand.Next(2000, 3000));
                     Flammability = .0001f;
                     SetSolidity(true);
+                    IsDoor = true;
                     break;
                 case Layer2TileType.TrashCan:
                     _texture2 = "Trash Can";
