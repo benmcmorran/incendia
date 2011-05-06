@@ -95,16 +95,13 @@ namespace Incendia
 
         public void Move(Vector2 movement)
         {
-            if (_isMovingUsingScreenAxes)
+            if (IsMovingUsingScreenAxes)
             {
-                Matrix rotationMatrix = Matrix.CreateRotationZ(-_rotation);
-                _location += Vector2.Transform(movement, rotationMatrix);
+                Matrix rotationMatrix = Matrix.CreateRotationZ(-Rotation);
+                Location += Vector2.Transform(movement, rotationMatrix);
             }
             else
-            {
-                _location.X += movement.X;
-                _location.Y += movement.Y;
-            }
+                Location += movement;
         }
 
         public Rectangle BoundingBox(Viewport viewport)
@@ -114,9 +111,9 @@ namespace Incendia
                 Vector2 screenSize = new Vector2(viewport.Width, viewport.Height);
 
                 Vector2[] cameraCorners = new Vector2[4];
-                Matrix view = Matrix.CreateRotationZ(_rotation) *
-                                Matrix.CreateScale(1 / _zoom) *
-                                Matrix.CreateTranslation(_location.X, _location.Y, 0);
+                Matrix view = Matrix.CreateRotationZ(Rotation) *
+                                Matrix.CreateScale(1 / Zoom) *
+                                Matrix.CreateTranslation(Location.X, Location.Y, 0);
 
                 cameraCorners[0] = new Vector2(-screenSize.X / 2, -screenSize.Y / 2);
                 cameraCorners[1] = new Vector2(screenSize.X / 2, -screenSize.Y / 2);
@@ -157,9 +154,9 @@ namespace Incendia
         {
             Vector2 screenSize = new Vector2(viewport.Width, viewport.Height);
 
-            Matrix viewMatrix = Matrix.CreateTranslation(-_location.X, -_location.Y, 0) *
-                Matrix.CreateScale(_zoom) *
-                Matrix.CreateRotationZ(_rotation) *
+            Matrix viewMatrix = Matrix.CreateTranslation(-Location.X, -Location.Y, 0) *
+                Matrix.CreateScale(Zoom) *
+                Matrix.CreateRotationZ(Rotation) *
                 Matrix.CreateTranslation((screenSize.X / 2), (screenSize.Y / 2), 0);
 
             // Don't scale the depth (Z axis)

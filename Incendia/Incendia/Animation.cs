@@ -13,19 +13,19 @@ namespace Incendia
     {
         List<Frame> _frames;
         double _frameTime;
-        double _birthTime;
+        DateTime _birthTime;
 
         public Animation(double frameTime, List<Frame> frames)
         {
             _frames = new List<Frame>();
-            _birthTime = DateTime.Now.TimeOfDay.TotalSeconds;
+            _birthTime = DateTime.UtcNow;
             _frameTime = frameTime;
             _frames = frames;
         }
 
         public Frame GetFrame()
         {
-            return _frames[(int)((DateTime.Now.TimeOfDay.TotalSeconds - _birthTime) / _frameTime) % _frames.Count];
+            return _frames[(int)((DateTime.UtcNow - _birthTime).TotalSeconds / _frameTime) % _frames.Count];
         }
     }
 }
